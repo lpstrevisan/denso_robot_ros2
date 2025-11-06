@@ -19,18 +19,18 @@ import os
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import ExecuteProcess
 from typing import Text
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from typing import Iterable
 from typing import Text
 from launch.some_substitutions_type import SomeSubstitutionsType
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 """ Function for loading a yaml file. """
@@ -382,16 +382,22 @@ def generate_launch_description():
         ])
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
-    gazebo = ExecuteProcess(
-        condition=IfCondition(sim),
-        cmd=['gazebo', '--verbose', 'worlds/empty.world', '-s', 'libgazebo_ros_factory.so'],
-        output='screen')
+    ros_gz_sim = get_package_share_directory('ros_gz_sim')
+    
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
+        ),
+        launch_arguments={'gz_args': '-r -v 4 empty.sdf'}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
+                                                                  #'-v 4' == verbose level 4 (max level of console output)
+        condition=IfCondition(sim)
+    )
 
     spawn_entity = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
+        package='ros_gz_sim',
+        executable='create',
         condition=IfCondition(sim),
-        arguments=['-topic', 'robot_description', '-entity', denso_robot_model],
+        arguments=['-topic', 'robot_description', '-name', denso_robot_model],
         output='screen')
 
     nodes_to_start = [
