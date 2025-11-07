@@ -58,37 +58,31 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
 
 1. Install [ROS2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
-2. Make sure that `colcon`, its extensions and `vcs` are installed:
-
-   ```bash
-   sudo apt install python3-colcon-common-extensions python3-vcstool
-   ```
-
-3. Create a new ROS2 workspace:
+2. Create a new ROS2 workspace:
 
    ```bash
    export COLCON_WS=~/workspace/denso_ros2_ws
    mkdir -p $COLCON_WS/src
    ```
 
-4. Pull `denso_robot_ros2` packages:
+3. Pull `denso_robot_ros2` packages:
 
    ```bash
    cd $COLCON_WS
-   git clone -b humble https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2.git src/denso_robot_drivers_ros2
+   git clone -b vs050_descriptions_gz_fortress https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2.git src/denso_robot_drivers_ros2
    vcs import src --skip-existing --input src/denso_robot_drivers_ros2/denso_robot_drivers_ros2.repos
    ```
 
-5. To use [MoveIt2](https://moveit.ros.org/), install the [required packages (binary installation, Humble version)](https://moveit.ros.org/install-moveit2/binary/).
+4. To use [MoveIt2](https://moveit.ros.org/), install the [required packages (binary installation, Humble version)](https://moveit.ros.org/install-moveit2/binary/).
 
-6. Install dependencies (if not already installed):
+5. Install dependencies (if not already installed):
 
    ```bash
    sudo apt install ros-humble-ros2-control
    sudo apt install ros-humble-ros2-controllers
    ```
 
-7. Compile and source the workspace:
+6. Compile and source the workspace:
 
    ```bash
    rosdep install --ignore-src --from-paths src -y -r
