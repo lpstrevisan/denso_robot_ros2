@@ -406,6 +406,15 @@ def generate_launch_description():
         arguments=['-topic', 'robot_description', '-name', denso_robot_model],
         output='screen')
 
+    #Node necessary to connect camera in gazebo to ROS topic
+    ros_gz_image_bridge = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        arguments=['/basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
+        output='screen',
+        condition=IfCondition(sim)
+    )
+
     nodes_to_start = [
         control_node,
         robot_controller_spawner,
@@ -415,6 +424,7 @@ def generate_launch_description():
         static_tf,
         gazebo,
         spawn_entity,
+        ros_gz_image_bridge,
         robot_state_publisher_node,
         joint_state_broadcaster_spawner
     ]
