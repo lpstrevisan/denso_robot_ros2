@@ -383,12 +383,18 @@ def generate_launch_description():
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
+    world = PathJoinSubstitution([
+        FindPackageShare(LaunchConfiguration('description_package')),
+        'worlds',
+        'empty_with_camera_support.sdf'
+    ])
     
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
-        launch_arguments={'gz_args': '-r -v 4 empty.sdf'}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
+        launch_arguments={'gz_args': ['-r', '-v4', ' ', world]}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
                                                                   #'-v 4' == verbose level 4 (max level of console output)
         condition=IfCondition(sim)
     )
