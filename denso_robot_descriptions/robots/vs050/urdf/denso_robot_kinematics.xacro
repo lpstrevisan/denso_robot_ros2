@@ -187,29 +187,5 @@
 			<limit effort="1000" lower="-6.28318530717959" upper="6.28318530717959" velocity="5.96902604182061"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
-
-
-		<link name="$(arg namespace)basic_camera_link">
-			<inertial>
-				<mass value="1"/>
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
-			</inertial>
-			<collision>
-				<geometry>
-					<box size="0.01 0.01 0.01"/>
-				</geometry>
-			</collision>
-			<visual>
-				<geometry>
-					<box size="0.01 0.01 0.01"/>
-				</geometry>
-			</visual>
-		</link>
-
-		<joint name="$(arg namespace)basic_camera_joint" type="fixed">
-			<parent link="$(arg namespace)J6"/>
-			<child link="$(arg namespace)basic_camera_link"/>
-			<origin rpy="0 ${radians(-90)} 0" xyz="0 0 0.01"/>
-		</joint>
 	</xacro:macro>
 </robot>

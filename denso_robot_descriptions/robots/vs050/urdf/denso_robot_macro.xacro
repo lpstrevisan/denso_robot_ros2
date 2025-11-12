@@ -44,6 +44,12 @@
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot_kinematics.xacro" />
     <!-- ros2 control include -->
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot.ros2_control.xacro" />
+
+    <!-- For other tools, modify the filename parameter to the path of your tool's xacro file.
+    The line with tag <xacro:tool ... \> passes the parameters defined in your tool's xacro file 
+    (see basic_camera.xacro as an example implementation) -->
+    <xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
+    
     <!-- ros2 control instance -->
     <xacro:denso_robot_ros2_control
       name="GazeboSystem" namespace="$(arg namespace)"
@@ -71,31 +77,12 @@
     <!-- links -  main serial chain -->
     <xacro:denso_robot_arm_kinematics namespace="$(arg namespace)" model="$(arg model)" />
 
+    <xacro:tool namespace="$(arg namespace)" />
+
     <gazebo>
 	    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       		<parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/denso_robot_controllers.yaml</parameters>
     	</plugin>
   	</gazebo>
-
-    <gazebo reference="$(arg namespace)basic_camera_link">
-      <sensor name="basic_camera" type="camera">
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov>
-          <image>
-            <width>320</width>
-            <height>240</height>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>100</far>
-          </clip>
-        </camera>
-        <always_on>1</always_on>
-        <update_rate>30</update_rate>
-        <visualize>true</visualize>
-        <topic>basic_camera</topic>      
-      </sensor>
-    </gazebo>
-
   </xacro:macro>
 </robot>
