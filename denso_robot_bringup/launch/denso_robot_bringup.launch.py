@@ -160,6 +160,12 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'verbose', default_value='false',
             description='Print out additional debug information.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'basic_camera', default_value='false',
+            description='Add basic_camera in J6'
+        )
+    )
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
@@ -174,6 +180,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
 #    launch_rviz = LaunchConfiguration('launch_rviz')
     sim = LaunchConfiguration('sim')
+    basic_camera = LaunchConfiguration('basic_camera')
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
     robot_controller = LaunchConfiguration('robot_controller')
@@ -196,7 +203,8 @@ def generate_launch_description():
             'recv_format:=', recv_format, ' ',
             'namespace:=', namespace, ' ',
             'verbose:=', verbose, ' ',
-            'sim:=', sim, ' '
+            'sim:=', sim, ' ',
+            'basic_camera:=', basic_camera, ' '
         ])
     robot_description = {'robot_description': robot_description_content}
 
@@ -383,12 +391,18 @@ def generate_launch_description():
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
+    world = PathJoinSubstitution([
+        FindPackageShare(LaunchConfiguration('description_package')),
+        'worlds',
+        'empty_with_camera_support.sdf'
+    ])
     
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
-        launch_arguments={'gz_args': '-r -v 4 empty.sdf'}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
+        launch_arguments={'gz_args': ['-r', '-v4', ' ', world]}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
                                                                   #'-v 4' == verbose level 4 (max level of console output)
         condition=IfCondition(sim)
     )
@@ -400,6 +414,15 @@ def generate_launch_description():
         arguments=['-topic', 'robot_description', '-name', denso_robot_model],
         output='screen')
 
+    #Node necessary to connect camera in gazebo to ROS topic
+    ros_gz_image_bridge = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        arguments=['/basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
+        output='screen',
+        condition=IfCondition(sim)
+    )
+
     nodes_to_start = [
         control_node,
         robot_controller_spawner,
@@ -409,6 +432,7 @@ def generate_launch_description():
         static_tf,
         gazebo,
         spawn_entity,
+        ros_gz_image_bridge,
         robot_state_publisher_node,
         joint_state_broadcaster_spawner
     ]
