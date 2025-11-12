@@ -56,7 +56,7 @@ The most relevant arguments are the following:
     To use other robot types, see the _ROS2Converter_ page (**under construction**) for creating the URDF model and the associated [MoveIt2](https://moveit.ros.org/) configuration package
   - `ip_address` (**mandatory**) - IP address of the robot
   - `sim` (default: _true_) - whether the robot is simulated (Gazebo simulator) or an RC8 controller is connected (either WINCAPS III-simulated  or real controller)
-  - `basic_camera` (defalult: _false_) - whether the simulated robot (Gazebo Fortress simulator) has a camera attached to its Joint 6
+  - `basic_camera` (default: _false_) - whether the simulated robot (Gazebo Fortress simulator) has a camera attached to its Joint 6
   - `send_format` (default: _288_) - parameter to write Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"0"_ (no IO configuration)
   - `recv_format` (default: _292_) - parameter to read Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"2"_ (no IO configuration)
   - `bcap_slave_control_cycle_msec` (default: _8.0_) - DENSO robot control cycle \[ms\] (not considered if `sim:=true`)
