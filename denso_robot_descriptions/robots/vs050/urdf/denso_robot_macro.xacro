@@ -45,6 +45,9 @@
     <!-- ros2 control include -->
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot.ros2_control.xacro" />
 
+    <!-- For other tools, modify the filename parameter to the path of your tool's xacro file. -->
+    <!-- The line with tag xacro:tool passes the parameters defined in your tool's xacro file -->
+    <!-- (see basic_camera.xacro as an example implementation) -->
     <xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
     
     <!-- ros2 control instance -->
