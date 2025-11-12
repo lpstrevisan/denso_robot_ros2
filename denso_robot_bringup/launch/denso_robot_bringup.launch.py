@@ -420,7 +420,7 @@ def generate_launch_description():
         executable='image_bridge',
         arguments=['/basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
         output='screen',
-        condition=IfCondition(sim)
+        condition=IfCondition(sim and basic_camera)
     )
 
     nodes_to_start = [
