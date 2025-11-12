@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
      
-    <!-- here you define the parameters you want your xacro file to receive. -->
     <xacro:macro name="tool" params="namespace">
 
     <link name="$(arg namespace)basic_camera_link">
@@ -11,23 +10,18 @@
 		</inertial>
 		<collision>
 			<geometry>
-				<box size="0.01 0.01 0.01"/> <!-- if your tool has meshes, define the path to it here,
-                                                  example: tools/basic_camera/meshes/.
-                                                  See the vs050 robot urdf implementation as an example. -->
+				<box size="0.01 0.01 0.01"/> 
 			</geometry>
 		</collision>
 		<visual>
 			<geometry>
-				<box size="0.01 0.01 0.01"/> <!-- if your tool has meshes, define the path to it here
-                                                  example: tools/basic_camera/meshes/.
-                                                  see the vs050 robot urdf implementation as an example. -->
+				<box size="0.01 0.01 0.01"/> 
 			</geometry>
 		</visual>
 	</link>
 
 	<joint name="$(arg namespace)basic_camera_joint" type="fixed">
-		<parent link="$(arg namespace)J6"/> <!-- here you define where your tool will connect. 
-                                                 In this case, it's at joint 6. -->
+		<parent link="$(arg namespace)J6"/> 
 		<child link="$(arg namespace)basic_camera_link"/>
 		<origin rpy="0 ${radians(-90)} 0" xyz="0 0 0.01"/>
 	</joint>
