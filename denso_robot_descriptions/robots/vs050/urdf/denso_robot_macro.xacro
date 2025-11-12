@@ -17,6 +17,7 @@
     namespace
     transmission_hw_interface:=hardware_interface/PositionJointInterface
     sim:=false
+    basic_camera:=false
     ip_address
     send_format
     recv_format
@@ -48,7 +49,9 @@
     <!-- For other tools, modify the filename parameter to the path of your tool's xacro file. -->
     <!-- The line with tag xacro:tool passes the parameters defined in your tool's xacro file -->
     <!-- (see basic_camera.xacro as an example implementation) -->
-    <xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
+    <xacro:if value="$(arg basic_camera)">
+      <xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
+    </xacro:if>
     
     <!-- ros2 control instance -->
     <xacro:denso_robot_ros2_control
@@ -77,8 +80,10 @@
     <!-- links -  main serial chain -->
     <xacro:denso_robot_arm_kinematics namespace="$(arg namespace)" model="$(arg model)" />
 
-    <xacro:tool namespace="$(arg namespace)" />
-
+    <xacro:if value="$(arg basic_camera)">
+      <xacro:tool namespace="$(arg namespace)" />
+    </xacro:if>
+    
     <gazebo>
 	    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
       		<parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/denso_robot_controllers.yaml</parameters>
