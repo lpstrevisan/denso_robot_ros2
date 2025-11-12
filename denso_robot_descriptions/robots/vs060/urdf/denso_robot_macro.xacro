@@ -44,6 +44,9 @@
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot_kinematics.xacro" />
     <!-- ros2 control include -->
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot.ros2_control.xacro" />
+
+    <xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
+
     <!-- ros2 control instance -->
     <xacro:denso_robot_ros2_control
       name="GazeboSystem" namespace="$(arg namespace)"
@@ -70,6 +73,8 @@
 
     <!-- links -  main serial chain -->
     <xacro:denso_robot_arm_kinematics namespace="$(arg namespace)" model="$(arg model)" />
+
+    <xacro:tool namespace="$(arg namespace)" />
 
     <gazebo>
 	    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
