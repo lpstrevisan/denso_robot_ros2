@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="$(arg model)">
+
+  <!-- robot name parameter -->
+  <xacro:arg name="model" default="denso_robot"/>
+
+  <xacro:include filename="$(find denso_robot_moveit_config)/robots/$(arg model)/srdf/denso_robot_macro.srdf.xacro"/>
+
+  <!-- left arm -->
+  <xacro:denso_robot_srdf namespace="left_"/>
+  <!-- right arm -->
+  <xacro:denso_robot_srdf namespace="right_"/>
+
+</robot>
