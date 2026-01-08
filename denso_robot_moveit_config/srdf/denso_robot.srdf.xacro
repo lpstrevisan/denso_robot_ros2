@@ -8,6 +8,6 @@
 
   <xacro:include filename="$(find denso_robot_moveit_config)/robots/$(arg model)/srdf/denso_robot_macro.srdf.xacro"/>
 
-  <xacro:denso_robot_srdf name="$(arg namespace)$(arg model)" namespace="$(arg namespace)"/>
+  <xacro:denso_robot_srdf namespace="$(arg namespace)"/>
 
 </robot>
