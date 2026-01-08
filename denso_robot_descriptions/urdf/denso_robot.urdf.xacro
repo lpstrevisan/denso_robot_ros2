@@ -34,4 +34,10 @@
      recv_format="$(arg recv_format)" >
      <origin xyz="0 0 0" rpy="0 0 0" />
    </xacro:denso_robot>
+
+   <gazebo>
+	   <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/denso_robot_controllers.yaml</parameters>
+     </plugin>
+   </gazebo>
 </robot>
