@@ -46,7 +46,7 @@
         <always_on>1</always_on>
         <update_rate>30</update_rate>
         <visualize>true</visualize>
-        <topic>basic_camera</topic>      
+        <topic>${namespace}basic_camera</topic>      
       </sensor>
     </gazebo>
     </xacro:macro>
