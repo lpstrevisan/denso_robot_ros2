@@ -48,7 +48,7 @@ This file defines your tool's links, joints, and (if necessary) Gazebo sensors
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- here you define the parameters you want your xacro file to receive. -->
-    <xacro:macro name="tool" params="namespace">
+    <xacro:macro name="your_tool" params="namespace">
 
     <!-- if your tool has meshes, define the path to it in geometry tag. -->
     <link name="${namespace}your_tool_link">
@@ -100,10 +100,10 @@ Add the following lines to that file:
 
 1. Add the `include` tag at the top of the file, with the other includes:
 ```xml
-<xacro:include filename="$(find denso_robot_descriptions)/tools/basic_camera/urdf/basic_camera.xacro" />
+<xacro:include filename="$(find denso_robot_descriptions)/tools/your_tool/urdf/your_tool.xacro" />
 ```
 
 2. Add the tool macro call inside the main robot macro, near the end-effector (J6) definition:
 ```xml
-<xacro:tool namespace="${namespace}" />
+<xacro:your_tool namespace="${namespace}" />
 ```
