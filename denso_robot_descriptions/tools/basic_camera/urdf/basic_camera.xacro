@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- here you define the parameters you want your xacro file to receive. -->
-    <xacro:macro name="basic_camera" params="namespace">
+    <xacro:macro name="basic_camera" params="namespace end_effector">
 
     <!-- if your tool has meshes, define the path to it in geometry tag. -->
     <!-- see the vs050 robot urdf implementation as an example. -->
@@ -25,7 +25,7 @@
 
 	<joint name="${namespace}basic_camera_joint" type="fixed">
         <!-- here you define where your tool will connect. In this case, it's at joint 6. -->
-		<parent link="${namespace}J6"/> 
+		<parent link="${namespace}${end_effector}"/> 
 		<child link="${namespace}basic_camera_link"/>
 		<origin rpy="0 ${radians(-90)} 0" xyz="0 0 0.01"/>
 	</joint>
