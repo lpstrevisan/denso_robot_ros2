@@ -83,5 +83,9 @@
     <xacro:denso_robot_arm_kinematics namespace="${namespace}" model="$(arg model)" parent="${parent}" >
       <xacro:insert_block name="origin" />
     </xacro:denso_robot_arm_kinematics>
+
+    <xacro:if value="$(arg basic_camera)">
+      <xacro:basic_camera namespace="${namespace}" />
+    </xacro:if>
   </xacro:macro>
 </robot>
