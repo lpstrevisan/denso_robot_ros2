@@ -15,6 +15,8 @@
   <xacro:macro name="denso_robot" params="
     model
     namespace
+    parent
+    *origin
     transmission_hw_interface:=hardware_interface/PositionJointInterface
     sim:=false
     ip_address
@@ -46,7 +48,7 @@
     <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot.ros2_control.xacro" />
     <!-- ros2 control instance -->
     <xacro:denso_robot_ros2_control
-      name="GazeboSystem" namespace="$(arg namespace)"
+      name="GazeboSystem" namespace="${namespace}"
       sim="$(arg sim)"
       model="$(arg model)"
       ip_address="$(arg ip_address)"
@@ -65,11 +67,13 @@
       recv_format="$(arg recv_format)" />
 
     <!-- Add URDF transmission elements (for ros_control) -->
-    <xacro:denso_robot_arm_transmission namespace="$(arg namespace)" hw_interface="$(arg transmission_hw_interface)" />
+    <xacro:denso_robot_arm_transmission namespace="${namespace}" hw_interface="$(arg transmission_hw_interface)" />
     <!-- Placeholder for ros2_control transmission which don't yet exist -->
 
     <!-- links -  main serial chain -->
-    <xacro:denso_robot_arm_kinematics namespace="$(arg namespace)" model="$(arg model)" />
+    <xacro:denso_robot_arm_kinematics namespace="${namespace}" model="$(arg model)" parent="${parent}" >
+      <xacro:insert_block name="origin" />
+    </xacro:denso_robot_arm_kinematics>
 
     <gazebo>
 	    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
