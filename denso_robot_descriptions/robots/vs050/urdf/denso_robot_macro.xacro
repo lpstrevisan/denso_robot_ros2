@@ -85,7 +85,7 @@
     </xacro:denso_robot_arm_kinematics>
 
     <xacro:if value="$(arg basic_camera)">
-      <xacro:tool namespace="${namespace}" />
+      <xacro:basic_camera namespace="${namespace}" />
     </xacro:if>
   </xacro:macro>
 </robot>

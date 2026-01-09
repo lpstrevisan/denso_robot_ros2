@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- here you define the parameters you want your xacro file to receive. -->
-    <xacro:macro name="tool" params="namespace">
+    <xacro:macro name="basic_camera" params="namespace">
 
     <!-- if your tool has meshes, define the path to it in geometry tag. -->
     <!-- see the vs050 robot urdf implementation as an example. -->
