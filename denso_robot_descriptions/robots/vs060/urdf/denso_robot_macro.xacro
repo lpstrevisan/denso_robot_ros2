@@ -83,17 +83,5 @@
     <xacro:denso_robot_arm_kinematics namespace="${namespace}" model="$(arg model)" parent="${parent}" >
       <xacro:insert_block name="origin" />
     </xacro:denso_robot_arm_kinematics>
-
-    <xacro:if value="$(arg basic_camera)">
-      <xacro:tool namespace="${namespace}" />
-    </xacro:if>
-    
-    <gazebo>
-	    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      		<parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/denso_robot_controllers.yaml</parameters>
-    	</plugin>
-  	</gazebo>
-
-
   </xacro:macro>
 </robot>
