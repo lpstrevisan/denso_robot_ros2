@@ -51,7 +51,7 @@ This file defines your tool's links, joints, and (if necessary) Gazebo sensors
     <xacro:macro name="tool" params="namespace">
 
     <!-- if your tool has meshes, define the path to it in geometry tag. -->
-    <link name="$(arg namespace)your_tool_link">
+    <link name="${namespace}your_tool_link">
         <!-- mass and inertia are mandatory tags, but they can have generic values -->
 		<inertial>
 			<mass value="1"/>
@@ -69,10 +69,10 @@ This file defines your tool's links, joints, and (if necessary) Gazebo sensors
 		</visual>
 	</link>
 
-	<joint name="$(arg namespace)your_tool_joint" type="fixed">
+	<joint name="${namespace}your_tool_joint" type="fixed">
         <!-- here you define where your tool will connect. In this case, it's at joint 6. -->
-		<parent link="$(arg namespace)J6"/> 
-		<child link="$(arg namespace)your_tool_link"/>
+		<parent link="${namespace}J6"/> 
+		<child link="${namespace}your_tool_link"/>
         <!-- xyz="0 0 0" is not recommended, as it may cause collisions in the simulated environment.-->
 		<origin rpy="0 0 0" xyz="0 0 0.01"/> 
 	</joint>
@@ -82,7 +82,7 @@ This file defines your tool's links, joints, and (if necessary) Gazebo sensors
 
 
     <!--  the block below is only necessary if your tool needs to implement a sensor to be used in the Gazebo. -->
-    <gazebo reference="$(arg namespace)your_tool_link">
+    <gazebo reference="${namespace}your_tool_link">
       <sensor name="your_tool" type="type_of_sensor">
         <!-- At https://gazebosim.org/docs/fortress/sensors/, you can find examples of some sensors. -->    
       </sensor>
@@ -105,5 +105,5 @@ Add the following lines to that file:
 
 2. Add the tool macro call inside the main robot macro, near the end-effector (J6) definition:
 ```xml
-<xacro:tool namespace="$(arg namespace)" />
+<xacro:tool namespace="${namespace}" />
 ```
