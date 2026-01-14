@@ -27,7 +27,7 @@
      transmission_hw_interface="$(arg transmission_hw_interface)"
      sim="$(arg sim)"
      basic_camera="$(arg basic_camera)"
-     ip_address="$(arg ip_address)"
+     ip_address="192.168.0.x"
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
@@ -42,7 +42,7 @@
      transmission_hw_interface="$(arg transmission_hw_interface)"
      sim="$(arg sim)"
      basic_camera="$(arg basic_camera)"
-     ip_address="$(arg ip_address)"
+     ip_address="192.168.0.x"
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
