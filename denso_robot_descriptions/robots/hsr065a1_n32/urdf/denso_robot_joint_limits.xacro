@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:macro name="denso_robot_control_limits" params="namespace">
-		<joint name="${namespace}joint_1">
+		<joint name="$(arg namespace)joint_1">
 			<command_interface name="position">
 				<param name="min">-2.268928</param>
 				<param name="max">2.268928</param>
@@ -14,7 +14,7 @@
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
-		<joint name="${namespace}joint_2">
+		<joint name="$(arg namespace)joint_2">
 			<command_interface name="position">
 				<param name="min">-2.617994</param>
 				<param name="max">2.617994</param>
@@ -27,7 +27,7 @@
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
-		<joint name="${namespace}joint_3">
+		<joint name="$(arg namespace)joint_3">
 			<command_interface name="position">
 				<param name="min">-0.100000</param>
 				<param name="max">0.220000</param>
@@ -40,7 +40,7 @@
 			<state_interface name="velocity"/>
 			<state_interface name="effort"/>
 		</joint>
-		<joint name="${namespace}joint_4">
+		<joint name="$(arg namespace)joint_4">
 			<command_interface name="position">
 				<param name="min">-6.283185</param>
 				<param name="max">6.283185</param>

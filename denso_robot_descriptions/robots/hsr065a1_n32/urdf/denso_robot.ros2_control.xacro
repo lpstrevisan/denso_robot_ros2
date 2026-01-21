@@ -40,7 +40,7 @@
         </xacro:unless>
       </hardware>
 
-      <xacro:denso_robot_control_limits namespace="${namespace}" />
+      <xacro:denso_robot_control_limits namespace="$(arg namespace)" />
     </ros2_control>
   </xacro:macro>
 

@@ -4,7 +4,7 @@
     This is a format for representing semantic information about the robot structure.
     A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
 -->
-  <xacro:macro name="denso_robot_srdf" params="namespace">
+  <xacro:macro name="denso_robot_srdf" params="name namespace">
     <!--GROUPS - Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
     <!--LINKS - When a link is specified, the parent joint of that link (if it exists) is automatically included-->
     <!--JOINTS - When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
@@ -12,10 +12,10 @@
     <!--SUBGROUPS - Groups can also be formed by referencing to already defined group names-->
 
     <group name="${namespace}arm">
-		<joint name="${namespace}joint_1"/>
-		<joint name="${namespace}joint_2"/>
-		<joint name="${namespace}joint_3"/>
-		<joint name="${namespace}joint_4"/>
+		<joint name="$(arg namespace)joint_1"/>
+		<joint name="$(arg namespace)joint_2"/>
+		<joint name="$(arg namespace)joint_3"/>
+		<joint name="$(arg namespace)joint_4"/>
 	</group>
 
 
@@ -24,15 +24,15 @@
     <!--VIRTUAL JOINT - Purpose - this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="${namespace}fixed_base" type="fixed" parent_frame="world" child_link="${namespace}base_link" />
     <!--DISABLE COLLISIONS - By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-	<disable_collisions link1="${namespace}J1" link2="${namespace}J2" reason="Adjacent"/>
-	<disable_collisions link1="${namespace}J1" link2="${namespace}J3" reason="Never"/>
-	<disable_collisions link1="${namespace}J1" link2="${namespace}J4" reason="Never"/>
-	<disable_collisions link1="${namespace}J1" link2="${namespace}base_link" reason="Adjacent"/>
-	<disable_collisions link1="${namespace}J2" link2="${namespace}J3" reason="Adjacent"/>
-	<disable_collisions link1="${namespace}J2" link2="${namespace}J4" reason="Never"/>
-	<disable_collisions link1="${namespace}J2" link2="${namespace}base_link" reason="Never"/>
-	<disable_collisions link1="${namespace}J3" link2="${namespace}J4" reason="Adjacent"/>
-	<disable_collisions link1="${namespace}J4" link2="${namespace}base_link" reason="Never"/>
+	<disable_collisions link1="$(arg namespace)J1" link2="$(arg namespace)J2" reason="Adjacent"/>
+	<disable_collisions link1="$(arg namespace)J1" link2="$(arg namespace)J3" reason="Never"/>
+	<disable_collisions link1="$(arg namespace)J1" link2="$(arg namespace)J4" reason="Never"/>
+	<disable_collisions link1="$(arg namespace)J1" link2="$(arg namespace)base_link" reason="Adjacent"/>
+	<disable_collisions link1="$(arg namespace)J2" link2="$(arg namespace)J3" reason="Adjacent"/>
+	<disable_collisions link1="$(arg namespace)J2" link2="$(arg namespace)J4" reason="Never"/>
+	<disable_collisions link1="$(arg namespace)J2" link2="$(arg namespace)base_link" reason="Never"/>
+	<disable_collisions link1="$(arg namespace)J3" link2="$(arg namespace)J4" reason="Adjacent"/>
+	<disable_collisions link1="$(arg namespace)J4" link2="$(arg namespace)base_link" reason="Never"/>
 
   </xacro:macro>
 </robot>
