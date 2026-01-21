@@ -149,8 +149,12 @@ def generate_launch_description():
             description='YAML file with the controllers configuration.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'robot_controller', default_value='denso_joint_trajectory_controller',
-            description='Robot controller to start.'))
+            'left_robot_controller', default_value='denso_joint_trajectory_controller',
+            description='Left robot controller to start.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_robot_controller', default_value='denso_joint_trajectory_controller',
+            description='Right robot controller to start.'))
 # Execution arguments (Rviz and Gazebo)
 # TODO: shall we give the user the choice not to load the rviz graphical environment ??
 #    declared_arguments.append(
@@ -188,7 +192,8 @@ def generate_launch_description():
     basic_camera = LaunchConfiguration('basic_camera')
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
-    robot_controller = LaunchConfiguration('robot_controller')
+    left_robot_controller = LaunchConfiguration('left_robot_controller')
+    right_robot_controller = LaunchConfiguration('right_robot_controller')
 
     denso_robot_core_pkg = get_package_share_directory('denso_robot_core')
 
@@ -349,12 +354,12 @@ def generate_launch_description():
     left_robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['left_denso_joint_trajectory_controller', '-c', '/controller_manager'])
+        arguments=[left_robot_controller, '-c', '/controller_manager'])
     
     right_robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=['right_denso_joint_trajectory_controller', '-c', '/controller_manager'])
+        arguments=[right_robot_controller, '-c', '/controller_manager'])
 
 # TODO: do we need the Warehouse mongodb server ?
 # (always / never / only in simulation with Gazebo ...)
