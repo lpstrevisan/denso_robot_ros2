@@ -20,8 +20,8 @@
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>moveit_ros_move_group</exec_depend>
-  <exec_depend>gazebo_ros</exec_depend>
-  <exec_depend>gazebo_ros2_control</exec_depend>
+  <exec_depend>ros_gz</exec_depend>
+  <exec_depend>gz_ros2_control</exec_depend>
   <exec_depend>denso_robot_control</exec_depend>
   <exec_depend>denso_robot_descriptions</exec_depend>
   <exec_depend>denso_robot_moveit_config</exec_depend>

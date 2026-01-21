@@ -19,18 +19,18 @@ import os
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.actions import ExecuteProcess
 from typing import Text
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from typing import Iterable
 from typing import Text
 from launch.some_substitutions_type import SomeSubstitutionsType
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 """ Function for loading a yaml file. """
@@ -160,6 +160,12 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'verbose', default_value='false',
             description='Print out additional debug information.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'basic_camera', default_value='false',
+            description='Add basic_camera in J6'
+        )
+    )
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
@@ -174,6 +180,7 @@ def generate_launch_description():
     namespace = LaunchConfiguration('namespace')
 #    launch_rviz = LaunchConfiguration('launch_rviz')
     sim = LaunchConfiguration('sim')
+    basic_camera = LaunchConfiguration('basic_camera')
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
     robot_controller = LaunchConfiguration('robot_controller')
@@ -196,7 +203,8 @@ def generate_launch_description():
             'recv_format:=', recv_format, ' ',
             'namespace:=', namespace, ' ',
             'verbose:=', verbose, ' ',
-            'sim:=', sim, ' '
+            'sim:=', sim, ' ',
+            'basic_camera:=', basic_camera, ' '
         ])
     robot_description = {'robot_description': robot_description_content}
 
@@ -382,17 +390,42 @@ def generate_launch_description():
         ])
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
-    gazebo = ExecuteProcess(
-        condition=IfCondition(sim),
-        cmd=['gazebo', '--verbose', 'worlds/empty.world', '-s', 'libgazebo_ros_factory.so'],
-        output='screen')
+    ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
+    world = PathJoinSubstitution([
+        FindPackageShare(LaunchConfiguration('description_package')),
+        'worlds',
+        'empty_with_camera_support.sdf'
+    ])
+    
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            ])
+        ),
+        launch_arguments={'gz_args': ['-r', '-v4', ' ', world]}.items(), #'-r' == run simulation on start (without this flag gazebo not connect with ros2_controllers)
+                                                                  #'-v 4' == verbose level 4 (max level of console output)
+        condition=IfCondition(sim)
+    )
 
     spawn_entity = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
+        package='ros_gz_sim',
+        executable='create',
         condition=IfCondition(sim),
-        arguments=['-topic', 'robot_description', '-entity', denso_robot_model],
+        arguments=['-topic', 'robot_description', '-name', denso_robot_model],
         output='screen')
+
+    #Node necessary to connect camera in gazebo to ROS topic
+    ros_gz_image_bridge = Node(
+        package='ros_gz_image',
+        executable='image_bridge',
+        arguments=['/basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
+        output='screen',
+        condition=IfCondition(sim and basic_camera)
+    )
 
     nodes_to_start = [
         control_node,
@@ -403,6 +436,7 @@ def generate_launch_description():
         static_tf,
         gazebo,
         spawn_entity,
+        ros_gz_image_bridge,
         robot_state_publisher_node,
         joint_state_broadcaster_spawner
     ]
