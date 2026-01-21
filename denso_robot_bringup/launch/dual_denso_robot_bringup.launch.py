@@ -112,8 +112,12 @@ def generate_launch_description():
             description='Control frequency.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'ip_address', default_value='192.168.0.1',
-            description='IP address by which the robot can be reached.'))
+            'left_ip_address', default_value='192.168.0.1',
+            description='IP address by which the left robot can be reached.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_ip_address', default_value='192.168.0.2',
+            description='IP address by which the right robot can be reached.'))
 # Configuration arguments
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -169,7 +173,8 @@ def generate_launch_description():
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
-    ip_address = LaunchConfiguration('ip_address')
+    left_ip_address = LaunchConfiguration('left_ip_address')
+    right_ip_address = LaunchConfiguration('right_ip_address')
     send_format = LaunchConfiguration('send_format')
     recv_format = LaunchConfiguration('recv_format')
     bcap_slave_control_cycle_msec = LaunchConfiguration('bcap_slave_control_cycle_msec')
@@ -197,7 +202,8 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare(description_package), 'urdf', description_file]),
             ' ',
-            'ip_address:=', ip_address, ' ',
+            'left_ip_address:=', left_ip_address, ' ',
+            'right_ip_address:=', right_ip_address, ' ',
             'model:=', denso_robot_model, ' ',
             'send_format:=', send_format, ' ',
             'recv_format:=', recv_format, ' ',
