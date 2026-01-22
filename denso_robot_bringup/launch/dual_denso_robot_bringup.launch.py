@@ -149,11 +149,11 @@ def generate_launch_description():
             description='YAML file with the controllers configuration.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'left_robot_controller', default_value='denso_joint_trajectory_controller',
+            'left_robot_controller', default_value='left_denso_joint_trajectory_controller',
             description='Left robot controller to start.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'right_robot_controller', default_value='denso_joint_trajectory_controller',
+            'right_robot_controller', default_value='right_denso_joint_trajectory_controller',
             description='Right robot controller to start.'))
 # Execution arguments (Rviz and Gazebo)
 # TODO: shall we give the user the choice not to load the rviz graphical environment ??
