@@ -11,4 +11,9 @@
   <!-- right arm -->
   <xacro:denso_robot_srdf namespace="right_"/>
 
+  <group name="dual_arm">
+    <group name="left_arm"/>
+    <group name="right_arm"/>
+  </group>
+
 </robot>
