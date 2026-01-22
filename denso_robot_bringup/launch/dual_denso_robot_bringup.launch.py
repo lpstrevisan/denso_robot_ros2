@@ -231,7 +231,7 @@ def generate_launch_description():
             'namespace:=', namespace, ' '
         ])
     robot_description_semantic = {'robot_description_semantic': robot_description_semantic_content}
-    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/dual_arms_kinematics.yaml')
+    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/dual_kinematics.yaml')
     robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
     # Planning Configuration
@@ -262,7 +262,7 @@ def generate_launch_description():
     moveit_controllers_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/dual_arms_moveit_controllers.yaml'
+            denso_robot_model, 'config/dual_moveit_controllers.yaml'
         ])
     trajectory_execution = {
         'moveit_manage_controllers': False,
@@ -296,7 +296,7 @@ def generate_launch_description():
     robot_limits_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/dual_arms_joint_limits.yaml'
+            denso_robot_model, 'config/dual_joint_limits.yaml'
         ])
 
     # Start the actual move_group node/action server
