@@ -51,13 +51,15 @@ To move the robot, publish messages to the appropriate topics.
 
 **NOTE**: Ensure the `frame_id` matches your robot's reference frame (commonly `base_link` or `world`).
 
+**NOTE**: It is recommended to publish at a fixed rate (e.g., -r 100 for 100Hz) for smooth motion.
+
 #### 2.1 Joint Jog (Joint Space Control)
 
 Sends angular velocities to specific joints.
 
 * **Unit**: Radians per second (rad/s)
 ```bash
-ros2 topic pub /servo_node/delta_joint_cmds control_msgs/msg/JointJog "{
+ros2 topic pub -r 100 /servo_node/delta_joint_cmds control_msgs/msg/JointJog "{
   header: {frame_id: 'base_link', stamp: 'now'},
   joint_names: ['joint_1', 'joint_2', ...],
   velocities: [<velocity_joint_1>, <velocity_joint_1>, ...]
@@ -74,7 +76,7 @@ Sends linear and angular velocities to the End Effector.
 * **Linear Unit**: Meters per second (m/s)
 * **Angular Unit**: Radians per second (rad/s)
 ```bash
-ros2 topic pub /servo_node/delta_twist_cmds geometry_msgs/msg/TwistStamped "{
+ros2 topic pub -r 100 /servo_node/delta_twist_cmds geometry_msgs/msg/TwistStamped "{
   header: {frame_id: 'base_link', stamp: 'now'},
   twist: {
     linear: {x: <velocity_x>, y: <velocity_y>, z: <velocity_z>},
