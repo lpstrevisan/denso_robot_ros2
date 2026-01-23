@@ -427,6 +427,26 @@ def generate_launch_description():
         condition=IfCondition(sim and basic_camera)
     )
 
+    # Get parameters for the Servo node
+    servo_yaml = load_yaml('denso_robot_moveit_config', 'config/moveit_servo.yaml')
+
+    servo_params = {'moveit_servo': servo_yaml,
+                    'moveit_servo.use_gazebo': sim
+    }
+
+    servo_node = Node(
+        package='moveit_servo',
+        executable='servo_node_main',
+        parameters=[
+            servo_params,
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+            {'use_sim_time': sim}
+        ],
+        output='screen',
+    )
+
     nodes_to_start = [
         control_node,
         robot_controller_spawner,
@@ -438,7 +458,8 @@ def generate_launch_description():
         spawn_entity,
         ros_gz_image_bridge,
         robot_state_publisher_node,
-        joint_state_broadcaster_spawner
+        joint_state_broadcaster_spawner,
+        servo_node
     ]
 
     return LaunchDescription(declared_arguments + nodes_to_start)
