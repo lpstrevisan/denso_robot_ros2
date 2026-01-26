@@ -10,6 +10,22 @@ Some useful links:
 
 [MoveIt Servo Humble GitHub](https://github.com/moveit/moveit2/tree/humble/moveit_ros/moveit_servo)
 
+## ⚠️ Safety Warning: Collision Thresholds
+
+**High Speed Risk:** Moving at high velocities may increase the risk of collisions due to latency or stopping distances.
+
+**Before using MoveIt Servo**, you must evaluate and tune the collision proximity thresholds to ensure safety.
+
+To modify these values, edit the following file:
+`denso_robot_moveit_config/config/moveit_servo.yaml`
+
+Adjust the following parameters:
+
+* `self_collision_proximity_threshold`: Distance to trigger a stop when near self-collision.
+* `scene_collision_proximity_threshold`: Distance to trigger a stop when near environment objects.
+
+---
+
 ## Usage
 
 **NOTE**: For dual-arm setups, prefix the service name with left_ or right_ (e.g., /left_servo_node/start_servo).
