@@ -443,6 +443,55 @@ def generate_launch_description():
         condition=IfCondition(sim and basic_camera)
     )
 
+    # Get parameters for the Servo node
+    servo_yaml = load_yaml('denso_robot_moveit_config', 'config/moveit_servo.yaml')
+
+    left_servo_params = {'moveit_servo': servo_yaml,
+                    'moveit_servo.use_gazebo': sim,
+                    'moveit_servo.move_group_name': 'left_arm',
+                    'moveit_servo.planning_frame': 'world',
+                    'moveit_servo.ee_frame_name': 'left_J6',
+                    'moveit_servo.robot_link_command_frame': 'left_base_link',
+                    'moveit_servo.command_out_topic': '/left_denso_joint_trajectory_controller/joint_trajectory'
+    }
+
+    left_servo_node = Node(
+        package='moveit_servo',
+        executable='servo_node_main',
+        name='left_servo_node',
+        parameters=[
+            left_servo_params,
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+            {'use_sim_time': sim}
+        ],
+        output='screen',
+    )
+
+    right_servo_params = {'moveit_servo': servo_yaml,
+                    'moveit_servo.use_gazebo': sim,
+                    'moveit_servo.move_group_name': 'right_arm',
+                    'moveit_servo.planning_frame': 'world',
+                    'moveit_servo.ee_frame_name': 'right_J6',
+                    'moveit_servo.robot_link_command_frame': 'right_base_link',
+                    'moveit_servo.command_out_topic': '/right_denso_joint_trajectory_controller/joint_trajectory'
+    }
+
+    right_servo_node = Node(
+        package='moveit_servo',
+        executable='servo_node_main',
+        name='right_servo_node',
+        parameters=[
+            right_servo_params,
+            robot_description,
+            robot_description_semantic,
+            robot_description_kinematics,
+            {'use_sim_time': sim}
+        ],
+        output='screen',
+    )
+
     nodes_to_start = [
         control_node,
         left_robot_controller_spawner,
@@ -455,7 +504,9 @@ def generate_launch_description():
         spawn_entity,
         ros_gz_image_bridge,
         robot_state_publisher_node,
-        joint_state_broadcaster_spawner
+        joint_state_broadcaster_spawner,
+        left_servo_node,
+        right_servo_node
     ]
 
     return LaunchDescription(declared_arguments + nodes_to_start)

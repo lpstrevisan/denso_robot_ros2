@@ -70,7 +70,6 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
    ```bash
    cd $COLCON_WS
    git clone -b humble https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2.git src/denso_robot_drivers_ros2
-   vcs import src --skip-existing --input src/denso_robot_drivers_ros2/denso_robot_drivers_ros2.repos
    ```
 
 4. To use [MoveIt2](https://moveit.ros.org/), install the [required packages (binary installation, Humble version)](https://moveit.ros.org/install-moveit2/binary/).
@@ -78,6 +77,7 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
 5. Install dependencies (if not already installed):
 
    ```bash
+   sudo apt install ros-humble-moveit-servo
    sudo apt install ros-humble-ros2-control
    sudo apt install ros-humble-ros2-controllers
    ```

@@ -12,6 +12,8 @@ Some useful links:
 
 ## Usage
 
+**NOTE**: For dual-arm setups, prefix the service name with left_ or right_ (e.g., /left_servo_node/start_servo).
+
 ### 1. Service Commands (Start / Pause / Stop)
 
 The servo node must be activated or managed via ROS2 service calls. Use the following commands to handle the servo state.
@@ -53,6 +55,12 @@ To move the robot, publish messages to the appropriate topics.
 
 **NOTE**: It is recommended to publish at a fixed rate (e.g., -r 100 for 100Hz) for smooth motion.
 
+**NOTE**: For dual-arm setups, you must prefix the **topic** name, **frame_id**, and **joint_names**:
+
+* **Topic:** `/left_servo_node/delta_joint_cmds`
+* **Frame:** `left_base_link`
+* **Joints:** `left_joint_1`
+
 #### 2.1 Joint Jog (Joint Space Control)
 
 Sends angular velocities to specific joints.
@@ -66,8 +74,6 @@ ros2 topic pub -r 100 /servo_node/delta_joint_cmds control_msgs/msg/JointJog "{
 }"
 
 ```
-
-
 
 #### 2.2 Twist Stamped (Cartesian Control)
 
