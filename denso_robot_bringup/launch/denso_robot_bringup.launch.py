@@ -338,21 +338,6 @@ def generate_launch_description():
         executable='spawner',
         arguments=[robot_controller, '-c', '/controller_manager'])
 
-# TODO: do we need the Warehouse mongodb server ?
-# (always / never / only in simulation with Gazebo ...)
-    # Warehouse mongodb server
-
-#    mongodb_server_node = Node(
-#        package='warehouse_ros_mongo',
-#        executable='mongo_wrapper_ros.py',
-#        parameters=[
-#            {'warehouse_port': 33829},
-#            {'warehouse_host': 'localhost'},
-#            {'warehouse_plugin': 'warehouse_ros_mongo::MongoDatabaseConnection'}
-#        ],
-#        output='screen',
-#    )
-
 # --------- rviz with moveit configuration ---------
     rviz_config_file = PathJoinSubstitution(
         [FindPackageShare(moveit_config_package), 'rviz', 'view_robot.rviz'])
@@ -424,7 +409,6 @@ def generate_launch_description():
         control_node,
         robot_controller_spawner,
         move_group_node,
-#        mongodb_server_node,
         rviz_node,
         static_tf,
         gazebo,
