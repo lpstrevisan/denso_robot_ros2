@@ -161,8 +161,17 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'basic_camera', default_value='false',
             description='Add basic_camera in J6'
-        )
-    )
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'xyz', default_value='0 0 0',
+            description='XYZ position of arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'rpy', default_value='0 0 0',
+            description='RPY position of arm'
+        ))
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
@@ -181,6 +190,8 @@ def generate_launch_description():
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
     robot_controller = LaunchConfiguration('robot_controller')
+    xyz = LaunchConfiguration('xyz')
+    rpy = LaunchConfiguration('rpy')
 
     denso_robot_core_pkg = get_package_share_directory('denso_robot_core')
 
@@ -201,7 +212,9 @@ def generate_launch_description():
             'namespace:=', namespace, ' ',
             'verbose:=', verbose, ' ',
             'sim:=', sim, ' ',
-            'basic_camera:=', basic_camera, ' '
+            'basic_camera:=', basic_camera, ' ',
+            'xyz:="', xyz, '" ',
+            'rpy:="', rpy, '" '
         ])
     robot_description = {'robot_description': robot_description_content}
 

@@ -17,6 +17,12 @@
    <xacro:arg name="send_format" default="288" />
    <xacro:arg name="recv_format" default="292" />
 
+   <xacro:arg name="left_xyz" default="0 0.42 0" />
+   <xacro:arg name="left_rpy" default="0 0 ${-pi/2}" />
+   
+   <xacro:arg name="right_xyz" default="0 -0.42 0" />
+   <xacro:arg name="right_rpy" default="0 0 ${pi/2}" />
+
    <!-- Root link -->
    <link name="world"/>
 
@@ -32,7 +38,7 @@
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
-     <origin xyz="0 0.42 0" rpy="0 0 ${-pi/2}" />
+     <origin xyz="$(arg left_xyz)" rpy="$(arg left_rpy)" />
    </xacro:denso_robot>
 
    <!-- right arm -->
@@ -47,7 +53,7 @@
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
-     <origin xyz="0 -0.42 0" rpy="0 0 ${pi/2}" />
+     <origin xyz="$(arg right_xyz)" rpy="$(arg right_rpy)" />
    </xacro:denso_robot>
 
    <gazebo>

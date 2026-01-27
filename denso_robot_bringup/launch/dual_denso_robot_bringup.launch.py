@@ -169,8 +169,27 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'basic_camera', default_value='false',
             description='Add basic_camera in J6'
-        )
-    )
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'left_xyz', default_value='0 0.42 0',
+            description='XYZ position of left arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'left_rpy', default_value='0 0 -1.5708',
+            description='RPY position of left arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_xyz', default_value='0 -0.42 0',
+            description='XYZ position of right arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_rpy', default_value='0 0 1.5708',
+            description='RPY position of right arm'
+        ))
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
@@ -191,6 +210,10 @@ def generate_launch_description():
     controllers_file = LaunchConfiguration('controllers_file')
     left_robot_controller = LaunchConfiguration('left_robot_controller')
     right_robot_controller = LaunchConfiguration('right_robot_controller')
+    left_xyz = LaunchConfiguration('left_xyz')
+    left_rpy = LaunchConfiguration('left_rpy')
+    right_xyz = LaunchConfiguration('right_xyz')
+    right_rpy = LaunchConfiguration('right_rpy')
 
     denso_robot_core_pkg = get_package_share_directory('denso_robot_core')
 
@@ -212,7 +235,11 @@ def generate_launch_description():
             'namespace:=', namespace, ' ',
             'verbose:=', verbose, ' ',
             'sim:=', sim, ' ',
-            'basic_camera:=', basic_camera, ' '
+            'basic_camera:=', basic_camera, ' ',
+            'left_xyz:="', left_xyz, '" ',
+            'left_rpy:="', left_rpy, '" ',
+            'right_xyz:="', right_xyz, '" ',
+            'right_rpy:="', right_rpy, '" '
         ])
     robot_description = {'robot_description': robot_description_content}
 

@@ -17,6 +17,10 @@
    <xacro:arg name="send_format" default="288" />
    <xacro:arg name="recv_format" default="292" />
 
+   <xacro:arg name="xyz" default="0 0 0" />
+   <xacro:arg name="rpy" default="0 0 0" />
+   
+
    <!-- Root link -->
    <link name="world"/>
 
@@ -32,7 +36,7 @@
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
-     <origin xyz="0 0 0" rpy="0 0 0" />
+     <origin xyz="$(arg xyz)" rpy="$(arg rpy)" />
    </xacro:denso_robot>
 
    <gazebo>
