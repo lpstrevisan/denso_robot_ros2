@@ -32,7 +32,7 @@ The main launch file that starts the application is in the `denso_robot_bringup`
   - NOT COBOTTA robots (e.g. VS-060 robot):
 
    ```bash
-   ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=vs060 sim:=false ip_address:=192.168.0.1 send_format:=256 recv_format:=258
+   ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=vs060 sim:=false basic_camera:=false ip_address:=192.168.0.1 send_format:=256 recv_format:=258
    ```
 
 
