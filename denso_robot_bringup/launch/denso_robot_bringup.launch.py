@@ -147,11 +147,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'robot_controller', default_value='denso_joint_trajectory_controller',
             description='Robot controller to start.'))
-# Execution arguments (Rviz and Gazebo)
-# TODO: shall we give the user the choice not to load the rviz graphical environment ??
-#    declared_arguments.append(
-#        DeclareLaunchArgument('launch_rviz', default_value='true', description='Launch RViz?')
-#    )
+    declared_arguments.append(
+        DeclareLaunchArgument('rviz', default_value='false', description='Launch RViz?')
+    )
     declared_arguments.append(
         DeclareLaunchArgument(
             'sim', default_value='true',
@@ -178,7 +176,7 @@ def generate_launch_description():
     moveit_config_package = LaunchConfiguration('moveit_config_package')
     moveit_config_file = LaunchConfiguration('moveit_config_file')
     namespace = LaunchConfiguration('namespace')
-#    launch_rviz = LaunchConfiguration('launch_rviz')
+    rviz = LaunchConfiguration('rviz')
     sim = LaunchConfiguration('sim')
     basic_camera = LaunchConfiguration('basic_camera')
     verbose = LaunchConfiguration('verbose')
@@ -361,7 +359,7 @@ def generate_launch_description():
 
     rviz_node = Node(
         package='rviz2',
-#        condition=IfCondition(launch_rviz),
+        condition=IfCondition(rviz),
         executable='rviz2',
         name='rviz2_moveit',
         output='log',
