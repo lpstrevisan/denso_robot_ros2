@@ -6,42 +6,59 @@
    <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot_macro.xacro"/>
 
    <!-- parameters -->
-   <xacro:arg name="namespace" default="" />
    <xacro:arg name="transmission_hw_interface" default=""/>
 
    <!-- ros2_control related parameters -->
    <xacro:arg name="verbose" default="false" />
    <xacro:arg name="sim" default="false" />
    <xacro:arg name="basic_camera" default="false" />
-   <xacro:arg name="ip_address" default="192.168.0.1" />
+   <xacro:arg name="left_ip_address" default="192.168.0.1" />
+   <xacro:arg name="right_ip_address" default="192.168.0.2" />
    <xacro:arg name="send_format" default="288" />
    <xacro:arg name="recv_format" default="292" />
 
-   <xacro:arg name="xyz" default="0 0 0" />
-   <xacro:arg name="rpy" default="0 0 0" />
+   <xacro:arg name="left_xyz" default="0 0.42 0" />
+   <xacro:arg name="left_rpy" default="0 0 ${-pi/2}" />
    
+   <xacro:arg name="right_xyz" default="0 -0.42 0" />
+   <xacro:arg name="right_rpy" default="0 0 ${pi/2}" />
 
    <!-- Root link -->
    <link name="world"/>
 
-   <!-- arm -->
+   <!-- left arm -->
    <xacro:denso_robot
      model="$(arg model)"
-     namespace="$(arg namespace)"
+     namespace="left_"
      parent="world"
      transmission_hw_interface="$(arg transmission_hw_interface)"
      sim="$(arg sim)"
      basic_camera="$(arg basic_camera)"
-     ip_address="$(arg ip_address)"
+     ip_address="$(arg left_ip_address)"
      verbose="$(arg verbose)"
      send_format="$(arg send_format)"
      recv_format="$(arg recv_format)" >
-     <origin xyz="$(arg xyz)" rpy="$(arg rpy)" />
+     <origin xyz="$(arg left_xyz)" rpy="$(arg left_rpy)" />
+   </xacro:denso_robot>
+
+   <!-- right arm -->
+   <xacro:denso_robot
+     model="$(arg model)"
+     namespace="right_"
+     parent="world"
+     transmission_hw_interface="$(arg transmission_hw_interface)"
+     sim="$(arg sim)"
+     basic_camera="$(arg basic_camera)"
+     ip_address="$(arg right_ip_address)"
+     verbose="$(arg verbose)"
+     send_format="$(arg send_format)"
+     recv_format="$(arg recv_format)" >
+     <origin xyz="$(arg right_xyz)" rpy="$(arg right_rpy)" />
    </xacro:denso_robot>
 
    <gazebo>
 	   <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/denso_robot_controllers.yaml</parameters>
+      <parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/dual_denso_robot_controllers.yaml</parameters>
      </plugin>
    </gazebo>
 </robot>

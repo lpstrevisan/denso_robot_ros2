@@ -32,11 +32,11 @@ The main launch file that starts the application is in the `denso_robot_bringup`
   - NOT COBOTTA robots (e.g. VS-060 robot):
 
    ```bash
-   ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=vs060 sim:=false ip_address:=192.168.0.1 send_format:=256 recv_format:=258
+   ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=vs060 sim:=false basic_camera:=false ip_address:=192.168.0.1 send_format:=256 recv_format:=258
    ```
 
 
-#### 2.1 Launch File Details
+#### 2.1 Launch File Details (ONLY ON VS050 AND VS060)
 
 The main launch file that starts the application is in the `denso_robot_bringup` package:
 
@@ -52,11 +52,11 @@ The arguments for launch files can be listed using:
 
 The most relevant arguments are the following:
 
-  - `model` (**mandatory**) - the model of the DENSO robot (COBOTTA, VS-060, etc.). In the original DENSO ROS2 stack 2 robot models are already available ( _"cobotta"_ , _"vs060"_).
+  - `model` (**mandatory**) - the model of the DENSO robot (COBOTTA, VS-060, etc.). In the original DENSO ROS2 stack 2 robot models are already available ( _"vs050"_ , _"vs060"_).
     To use other robot types, see the _ROS2Converter_ page (**under construction**) for creating the URDF model and the associated [MoveIt2](https://moveit.ros.org/) configuration package
   - `ip_address` (**mandatory**) - IP address of the robot
   - `sim` (default: _true_) - whether the robot is simulated (Gazebo simulator) or an RC8 controller is connected (either WINCAPS III-simulated  or real controller)
-  - `basic_camera` (default: _false_) - whether the simulated robot (Gazebo Fortress simulator) has a camera attached to its Joint 6
+  - `basic_camera` (default: _false_) - whether the simulated robot (Gazebo Fortress simulator) has a camera attached to its Joint 6 (not considered if `sim:=false`)
   - `send_format` (default: _288_) - parameter to write Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"0"_ (no IO configuration)
   - `recv_format` (default: _292_) - parameter to read Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"2"_ (no IO configuration)
   - `bcap_slave_control_cycle_msec` (default: _8.0_) - DENSO robot control cycle \[ms\] (not considered if `sim:=true`)
@@ -65,6 +65,31 @@ The most relevant arguments are the following:
 |:--:| 
 | ![DENSO ROS2 stack (simulation)](docs/denso_drivers_simulation.png) | 
 
+##### 2.1.1 Collaboration Between Two Robotic Arms Launch File Details (VS050 ONLY)
+
+The launch file for the collaboration between two robotic arms, which starts the application, is in the `denso robot bringup` package:
+
+   ```bash
+   ros2 launch denso_robot_bringup dual_denso_robot_bringup.launch.py model:=<robot_model> sim:=false basic_camera:=false left_ip_address:=<left_robot_ip_address> right_ip_address:=<right_robot_ip_address> send_format:=<send_format_value> recv_format:=<recv_format_value>
+   ```
+
+The arguments for launch files can be listed using:
+
+   ```bash
+   ros2 launch denso_robot_bringup dual_denso_robot_bringup.launch.py --show-args
+   ```
+
+The most relevant arguments are the following:
+
+  - `model` (**mandatory**) - the model of the DENSO robot (COBOTTA, VS-060, etc.). In the original DENSO ROS2 stack 2 robot models are already available (_"vs050"_).
+    To use other robot types, see the _ROS2Converter_ page (**under construction**) for creating the URDF model and the associated [MoveIt2](https://moveit.ros.org/) configuration package
+  - `left_ip_address` (**mandatory** if `sim:=false`) - IP address of the left robot
+  - `right_ip_address` (**mandatory** if `sim:=false`) - IP address of the right robot
+  - `sim` (default: _true_) - whether the robot is simulated (Gazebo simulator) or an RC8 controller is connected (either WINCAPS III-simulated  or real controller)
+  - `basic_camera` (default: _false_) - whether the simulated robot (Gazebo Fortress simulator) has a camera attached to its Joint 6 (not considered if `sim:=false`)
+  - `send_format` (default: _288_) - parameter to write Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"0"_ (no IO configuration)
+  - `recv_format` (default: _292_) - parameter to read Hand I/O, Mini I/O or User I/O signals (not considered if `sim:=true`). When Connecting to a COBOTTA robot assign value _"2"_ (no IO configuration)
+  - `bcap_slave_control_cycle_msec` (default: _8.0_) - DENSO robot control cycle \[ms\] (not considered if `sim:=true`)
 
 #### 2.2 Send Format Parameter
 

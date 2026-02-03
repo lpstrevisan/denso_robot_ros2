@@ -95,7 +95,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             'model',
-            choices=['vs050', 'vs060'],
+            choices=['vs050'],
             description='Type/series of used denso robot.'))
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -111,8 +111,12 @@ def generate_launch_description():
             description='Control frequency.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'ip_address', default_value='192.168.0.1',
-            description='IP address by which the robot can be reached.'))
+            'left_ip_address', default_value='192.168.0.1',
+            description='IP address by which the left robot can be reached.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_ip_address', default_value='192.168.0.2',
+            description='IP address by which the right robot can be reached.'))
 # Configuration arguments
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -121,7 +125,7 @@ def generate_launch_description():
                 + ' is not set, it enables use of a custom description.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'description_file', default_value='denso_robot.urdf.xacro',
+            'description_file', default_value='dual_denso_robot.urdf.xacro',
             description='URDF/XACRO description file with the robot.'))
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -130,7 +134,7 @@ def generate_launch_description():
                 + ' is not set, it enables use of a custom moveit config.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'moveit_config_file', default_value='denso_robot.srdf.xacro',
+            'moveit_config_file', default_value='dual_denso_robot.srdf.xacro',
             description='MoveIt SRDF/XACRO description file with the robot.'))
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -140,12 +144,16 @@ def generate_launch_description():
                 + " configuration have to be updated."))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'controllers_file', default_value='denso_robot_controllers.yaml',
+            'controllers_file', default_value='dual_denso_robot_controllers.yaml',
             description='YAML file with the controllers configuration.'))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'robot_controller', default_value='denso_joint_trajectory_controller',
-            description='Robot controller to start.'))
+            'left_robot_controller', default_value='left_denso_joint_trajectory_controller',
+            description='Left robot controller to start.'))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_robot_controller', default_value='right_denso_joint_trajectory_controller',
+            description='Right robot controller to start.'))
     declared_arguments.append(
         DeclareLaunchArgument('rviz', default_value='false', description='Launch RViz?')
     )
@@ -164,18 +172,29 @@ def generate_launch_description():
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'xyz', default_value='0 0 0',
-            description='XYZ position of arm'
+            'left_xyz', default_value='0 0.42 0',
+            description='XYZ position of left arm'
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'rpy', default_value='0 0 0',
-            description='RPY position of arm'
+            'left_rpy', default_value='0 0 -1.5708',
+            description='RPY position of left arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_xyz', default_value='0 -0.42 0',
+            description='XYZ position of right arm'
+        ))
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'right_rpy', default_value='0 0 1.5708',
+            description='RPY position of right arm'
         ))
 
 # Initialize Arguments
     denso_robot_model = LaunchConfiguration('model')
-    ip_address = LaunchConfiguration('ip_address')
+    left_ip_address = LaunchConfiguration('left_ip_address')
+    right_ip_address = LaunchConfiguration('right_ip_address')
     send_format = LaunchConfiguration('send_format')
     recv_format = LaunchConfiguration('recv_format')
     bcap_slave_control_cycle_msec = LaunchConfiguration('bcap_slave_control_cycle_msec')
@@ -189,9 +208,12 @@ def generate_launch_description():
     basic_camera = LaunchConfiguration('basic_camera')
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
-    robot_controller = LaunchConfiguration('robot_controller')
-    xyz = LaunchConfiguration('xyz')
-    rpy = LaunchConfiguration('rpy')
+    left_robot_controller = LaunchConfiguration('left_robot_controller')
+    right_robot_controller = LaunchConfiguration('right_robot_controller')
+    left_xyz = LaunchConfiguration('left_xyz')
+    left_rpy = LaunchConfiguration('left_rpy')
+    right_xyz = LaunchConfiguration('right_xyz')
+    right_rpy = LaunchConfiguration('right_rpy')
 
     denso_robot_core_pkg = get_package_share_directory('denso_robot_core')
 
@@ -205,7 +227,8 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare(description_package), 'urdf', description_file]),
             ' ',
-            'ip_address:=', ip_address, ' ',
+            'left_ip_address:=', left_ip_address, ' ',
+            'right_ip_address:=', right_ip_address, ' ',
             'model:=', denso_robot_model, ' ',
             'send_format:=', send_format, ' ',
             'recv_format:=', recv_format, ' ',
@@ -213,8 +236,10 @@ def generate_launch_description():
             'verbose:=', verbose, ' ',
             'sim:=', sim, ' ',
             'basic_camera:=', basic_camera, ' ',
-            'xyz:="', xyz, '" ',
-            'rpy:="', rpy, '" '
+            'left_xyz:="', left_xyz, '" ',
+            'left_rpy:="', left_rpy, '" ',
+            'right_xyz:="', right_xyz, '" ',
+            'right_rpy:="', right_rpy, '" '
         ])
     robot_description = {'robot_description': robot_description_content}
 
@@ -230,7 +255,7 @@ def generate_launch_description():
             'namespace:=', namespace, ' '
         ])
     robot_description_semantic = {'robot_description_semantic': robot_description_semantic_content}
-    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/kinematics.yaml')
+    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/dual_kinematics.yaml')
     robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
     # Planning Configuration
@@ -256,7 +281,7 @@ def generate_launch_description():
     moveit_controllers_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/moveit_controllers.yaml'
+            denso_robot_model, 'config/dual_moveit_controllers.yaml'
         ])
     trajectory_execution = {
         'moveit_manage_controllers': False,
@@ -290,7 +315,7 @@ def generate_launch_description():
     robot_limits_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/joint_limits.yaml'
+            denso_robot_model, 'config/dual_joint_limits.yaml'
         ])
 
     # Start the actual move_group node/action server
@@ -345,10 +370,15 @@ def generate_launch_description():
         executable='spawner',
         arguments=['denso_joint_state_broadcaster', '--controller-manager', '/controller_manager'])
 
-    robot_controller_spawner = Node(
+    left_robot_controller_spawner = Node(
         package='controller_manager',
         executable='spawner',
-        arguments=[robot_controller, '-c', '/controller_manager'])
+        arguments=[left_robot_controller, '-c', '/controller_manager'])
+    
+    right_robot_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[right_robot_controller, '-c', '/controller_manager'])
 
 # --------- rviz with moveit configuration ---------
     rviz_config_file = PathJoinSubstitution(
@@ -412,14 +442,15 @@ def generate_launch_description():
     ros_gz_image_bridge = Node(
         package='ros_gz_image',
         executable='image_bridge',
-        arguments=['/basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
+        arguments=['/left_basic_camera', '/right_basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
         output='screen',
         condition=IfCondition(sim and basic_camera)
     )
 
     nodes_to_start = [
         control_node,
-        robot_controller_spawner,
+        left_robot_controller_spawner,
+        right_robot_controller_spawner,
         move_group_node,
         rviz_node,
         static_tf,
