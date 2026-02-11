@@ -172,22 +172,22 @@ def generate_launch_description():
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'left_xyz', default_value='0 0.42 0',
+            'left_xyz', default_value='-0.417 0 0',
             description='XYZ position of left arm'
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'left_rpy', default_value='0 0 -1.5708',
+            'left_rpy', default_value='0 0 0',
             description='RPY position of left arm'
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'right_xyz', default_value='0 -0.42 0',
+            'right_xyz', default_value='0.417 0 0',
             description='XYZ position of right arm'
         ))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'right_rpy', default_value='0 0 1.5708',
+            'right_rpy', default_value='0 0 3.14159',
             description='RPY position of right arm'
         ))
 
@@ -399,14 +399,24 @@ def generate_launch_description():
         ])
 
     # Static TF
-    static_tf = Node(
+    left_static_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_transform_publisher',
         output='log',
         arguments=[
             '--frame-id', 'world',
-            '--child-frame-id', TextJoinSubstitution([namespace], 'base_link', '')
+            '--child-frame-id', 'left_base_link'
+        ])
+    
+    right_static_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_transform_publisher',
+        output='log',
+        arguments=[
+            '--frame-id', 'world',
+            '--child-frame-id', 'right_base_link'
         ])
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
@@ -453,7 +463,8 @@ def generate_launch_description():
         right_robot_controller_spawner,
         move_group_node,
         rviz_node,
-        static_tf,
+        left_static_tf,
+        right_static_tf,
         gazebo,
         spawn_entity,
         ros_gz_image_bridge,
