@@ -1,0 +1,30 @@
+services:
+  denso-robot-ros2:
+    container_name: denso_container
+    image: denso-image
+    
+    build: 
+      context: ..
+      dockerfile: .docker/Dockerfile
+    
+    tty: true
+    stdin_open: true    
+    
+    environment:
+      - DISPLAY=${DISPLAY} 
+      - QT_X11_NO_MITSHM=1 
+    
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /dev/dri:/dev/dri 
+      - ../:/root/denso_ws/src/denso_robot_ros2
+    
+    network_mode: "host"
+
+    command: >
+      /bin/bash -c "
+      source /opt/ros/humble/setup.bash &&
+      if [ ! -d install ]; then
+        colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
+      fi &&
+      exec bash"
