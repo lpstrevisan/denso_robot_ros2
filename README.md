@@ -70,7 +70,6 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
    ```bash
    cd $COLCON_WS
    git clone -b humble https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2.git src/denso_robot_drivers_ros2
-   vcs import src --skip-existing --input src/denso_robot_drivers_ros2/denso_robot_drivers_ros2.repos
    ```
 
 4. To use [MoveIt2](https://moveit.ros.org/), install the [required packages (binary installation, Humble version)](https://moveit.ros.org/install-moveit2/binary/).
@@ -78,6 +77,7 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
 5. Install dependencies (if not already installed):
 
    ```bash
+   sudo apt install ros-humble-moveit-servo
    sudo apt install ros-humble-ros2-control
    sudo apt install ros-humble-ros2-controllers
    ```
@@ -90,8 +90,17 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
    source install/setup.bash
    ```
 
+## 4. ROS2 Nodes Usage
 
-## 4. Controller Preparation
+Three different control modalities can be selected for DENSO robots:
+
+  - [b-CAP command interface](bcap_service/README.md)
+  - [ORiN2 command interface](denso_robot_core/README.md)
+  - [slaveMode robot control](denso_robot_control/README.md)
+  - [MoveIt Servo](denso_robot_moveit_config/README.md)
+
+
+## 5. Controller Preparation
 
 `denso_robot_ros2` packages use [b-CAP communication](https://www.denso-wave.com/en/robot/product/function/b-CAP.html), which is ORiN2 communication standard, to control DENSO robots.
 Following are the instructions to setup DENSO hardware in order to interface DENSO ROS2 nodes with simulated or real robot.
@@ -225,12 +234,3 @@ For controlling a real DENSO robot, the RC8 controller must be configured.
 
 8. Set speed/acceleration parameters: the URDF models and the associated [MoveIt2](https://moveit.ros.org/) configuration packages created by _ROS2Converter_ have dummy speed/acceleration parameters.
     To specify the actual speed/acceleration parameters, see the _AcquireVelAcc_ page (**under construction**).
-
-
-## 5. ROS2 Nodes Usage
-
-Three different control modalities can be selected for DENSO robots:
-
-  - [b-CAP command interface](bcap_service/README.md)
-  - [ORiN2 command interface](denso_robot_core/README.md)
-  - [slaveMode robot control](denso_robot_control/README.md)
