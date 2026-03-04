@@ -383,9 +383,9 @@ def generate_launch_description():
     ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     world = PathJoinSubstitution([
-        FindPackageShare(LaunchConfiguration('description_package')),
+        FindPackageShare('denso_robot_gazebo'),
         'worlds',
-        'empty_with_camera_support.sdf'
+        'empty_with_sensor_support.sdf'
     ])
     
     gazebo = IncludeLaunchDescription(
