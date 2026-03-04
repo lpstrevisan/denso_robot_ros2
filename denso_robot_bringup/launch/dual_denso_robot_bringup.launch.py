@@ -144,7 +144,7 @@ def generate_launch_description():
                 + " configuration have to be updated."))
     declared_arguments.append(
         DeclareLaunchArgument(
-            'controllers_file', default_value='dual_denso_robot_controllers.yaml',
+            'controllers_file', default_value='denso_robot_controllers.yaml',
             description='YAML file with the controllers configuration.'))
     declared_arguments.append(
         DeclareLaunchArgument(
@@ -255,7 +255,7 @@ def generate_launch_description():
             'namespace:=', namespace, ' '
         ])
     robot_description_semantic = {'robot_description_semantic': robot_description_semantic_content}
-    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/dual_kinematics.yaml')
+    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/dual/kinematics.yaml')
     robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
 
     # Planning Configuration
@@ -281,7 +281,7 @@ def generate_launch_description():
     moveit_controllers_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/dual_moveit_controllers.yaml'
+            denso_robot_model, 'config/dual/moveit_controllers.yaml'
         ])
     trajectory_execution = {
         'moveit_manage_controllers': False,
@@ -315,7 +315,7 @@ def generate_launch_description():
     robot_limits_file = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config/dual_joint_limits.yaml'
+            denso_robot_model, 'config/dual/joint_limits.yaml'
         ])
 
     # Start the actual move_group node/action server
@@ -341,7 +341,7 @@ def generate_launch_description():
     robot_controllers = PathJoinSubstitution(
         [
             FindPackageShare(moveit_config_package), 'robots',
-            denso_robot_model, 'config', controllers_file
+            denso_robot_model, 'config', 'dual', controllers_file
         ])
 
     control_node = Node(
