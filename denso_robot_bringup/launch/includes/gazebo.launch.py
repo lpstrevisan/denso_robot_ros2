@@ -1,0 +1,95 @@
+# Copyright (c) 2021 DENSO WAVE INCORPORATED
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Author: DENSO WAVE INCORPORATED
+
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+
+
+def launch_setup(context, *args, **kwargs):
+    sim = LaunchConfiguration('sim').perform(context)
+    basic_camera = LaunchConfiguration('basic_camera').perform(context)
+    model = LaunchConfiguration('model').perform(context)
+    camera_topics = LaunchConfiguration('camera_topics').perform(context).split()
+
+    world = PathJoinSubstitution([
+        FindPackageShare('denso_robot_gazebo'),
+        'worlds',
+        'empty_with_sensor_support.sdf'
+    ])
+
+    gazebo = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                FindPackageShare('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            ])
+        ),
+        launch_arguments={
+            'gz_args': ['-r', '-v4', ' ', world]
+        }.items(),
+        # '-r'   == run simulation on start (required for ros2_controllers to connect)
+        # '-v 4' == verbose level 4 (maximum console output)
+        condition=IfCondition(sim)
+    )
+
+    spawn_entity = Node(
+        package='ros_gz_sim',
+        executable='create',
+        condition=IfCondition(sim),
+        arguments=['-topic', 'robot_description', '-name', model],
+        output='screen'
+    )
+
+    nodes = [gazebo, spawn_entity]
+
+    # Start camera bridge only when both simulation and camera are enabled
+    if sim.lower() == 'true' and basic_camera.lower() == 'true':
+        ros_gz_image_bridge = Node(
+            package='ros_gz_image',
+            executable='image_bridge',
+            # camera_topics is a list of topic names defined in the camera .xacro file
+            arguments=camera_topics,
+            output='screen'
+        )
+        nodes.append(ros_gz_image_bridge)
+
+    return nodes
+
+
+def generate_launch_description():
+
+    declared_arguments = [
+        DeclareLaunchArgument(
+            'sim', default_value='true',
+            description='Whether to run in simulation.'),
+        DeclareLaunchArgument(
+            'basic_camera', default_value='false',
+            description='Enable Gazebo-to-ROS camera image bridge.'),
+        DeclareLaunchArgument(
+            'model', default_value='vs050',
+            description='Robot model name (used as the spawned entity name).'),
+        DeclareLaunchArgument(
+            'camera_topics', default_value='/basic_camera',
+            description='Space-separated list of camera topic names for the image bridge.'),
+    ]
+
+    return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
