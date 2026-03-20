@@ -24,72 +24,63 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def launch_setup(context, *args, **kwargs):
-    sim = LaunchConfiguration('sim').perform(context)
-    basic_camera = LaunchConfiguration('basic_camera').perform(context)
-    model = LaunchConfiguration('model').perform(context)
-    camera_topics = LaunchConfiguration('camera_topics').perform(context).split()
+    basic_camera = LaunchConfiguration("basic_camera").perform(context)
+    model = LaunchConfiguration("model").perform(context)
+    camera_topics = LaunchConfiguration("camera_topics").perform(context).split()
 
     world = PathJoinSubstitution([
-        FindPackageShare('denso_robot_gazebo'),
-        'worlds',
-        'empty_with_sensor_support.sdf'
+        FindPackageShare("denso_robot_gazebo"),
+        "worlds",
+        "empty_with_sensor_support.sdf"
     ])
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
-                FindPackageShare('ros_gz_sim'),
-                'launch',
-                'gz_sim.launch.py'
+                FindPackageShare("ros_gz_sim"),
+                "launch",
+                "gz_sim.launch.py"
             ])
         ),
         launch_arguments={
-            'gz_args': ['-r', '-v4', ' ', world]
+            "gz_args": ["-r", "-v4", " ", world]
         }.items(),
         # '-r'   == run simulation on start (required for ros2_controllers to connect)
         # '-v 4' == verbose level 4 (maximum console output)
-        condition=IfCondition(sim)
     )
 
     spawn_entity = Node(
-        package='ros_gz_sim',
-        executable='create',
-        condition=IfCondition(sim),
-        arguments=['-topic', 'robot_description', '-name', model],
-        output='screen'
+        package="ros_gz_sim",
+        executable="create",
+        arguments=["-topic", "robot_description", "-name", model],
+        output="screen"
     )
 
-    nodes = [gazebo, spawn_entity]
+    # Bridge Gazebo camera topics to ROS only when a camera is requested
+    ros_gz_image_bridge = Node(
+        package="ros_gz_image",
+        executable="image_bridge",
+        # camera_topics is a list of topic names defined in the camera .xacro file
+        arguments=camera_topics,
+        output="screen",
+        condition=IfCondition(basic_camera)
+    )
 
-    # Start camera bridge only when both simulation and camera are enabled
-    if sim.lower() == 'true' and basic_camera.lower() == 'true':
-        ros_gz_image_bridge = Node(
-            package='ros_gz_image',
-            executable='image_bridge',
-            # camera_topics is a list of topic names defined in the camera .xacro file
-            arguments=camera_topics,
-            output='screen'
-        )
-        nodes.append(ros_gz_image_bridge)
-
-    return nodes
+    return [gazebo, spawn_entity, ros_gz_image_bridge]
 
 
 def generate_launch_description():
 
     declared_arguments = [
         DeclareLaunchArgument(
-            'sim', default_value='true',
-            description='Whether to run in simulation.'),
+            "basic_camera", default_value="false",
+            description="Enable Gazebo-to-ROS camera image bridge."),
         DeclareLaunchArgument(
-            'basic_camera', default_value='false',
-            description='Enable Gazebo-to-ROS camera image bridge.'),
+            "model", default_value="vs050",
+            description="Robot model name (used as the spawned entity name)."),
         DeclareLaunchArgument(
-            'model', default_value='vs050',
-            description='Robot model name (used as the spawned entity name).'),
-        DeclareLaunchArgument(
-            'camera_topics', default_value='/basic_camera',
-            description='Space-separated list of camera topic names for the image bridge.'),
+            "camera_topics", default_value="/basic_camera",
+            description="Space-separated list of camera topic names for the image bridge."),
     ]
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

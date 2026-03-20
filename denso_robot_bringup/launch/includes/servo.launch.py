@@ -16,6 +16,7 @@
 
 import os
 import sys
+import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
@@ -23,55 +24,59 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 # Import shared utilities from parent launch directory
-_launch_dir = os.path.join(get_package_share_directory('denso_robot_bringup'), 'launch')
+_launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
 if _launch_dir not in sys.path:
     sys.path.insert(0, _launch_dir)
-from launch_utils import load_yaml, load_yaml_file  # noqa: E402
+from launch_utils import load_yaml  # noqa: E402
 
 
 def launch_setup(context, *args, **kwargs):
-    robot_description = LaunchConfiguration('robot_description').perform(context)
+    robot_description = LaunchConfiguration("robot_description").perform(context)
     robot_description_semantic = LaunchConfiguration(
-        'robot_description_semantic').perform(context)
-    moveit_config_package = LaunchConfiguration('moveit_config_package').perform(context)
-    kinematics_yaml_file = LaunchConfiguration('kinematics_yaml_file').perform(context)
-    sim = LaunchConfiguration('sim').perform(context)
-    servo_node_name = LaunchConfiguration('servo_node_name').perform(context)
+        "robot_description_semantic").perform(context)
+    moveit_config_package = LaunchConfiguration("moveit_config_package").perform(context)
+    kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file").perform(context)
+    sim = LaunchConfiguration("sim").perform(context)
+    servo_node_name = LaunchConfiguration("servo_node_name").perform(context)
 
-    servo_yaml = load_yaml(moveit_config_package, 'config/moveit_servo.yaml')
+    servo_yaml = load_yaml(moveit_config_package, "config/moveit_servo.yaml")
     servo_params = {
-        'moveit_servo': servo_yaml,
-        'moveit_servo.use_gazebo': sim
+        "moveit_servo": servo_yaml,
+        "moveit_servo.use_gazebo": sim
     }
 
     # Apply optional overrides for multi-arm configurations
     override_map = {
-        'moveit_servo.move_group_name': 'move_group_name',
-        'moveit_servo.planning_frame': 'planning_frame',
-        'moveit_servo.ee_frame_name': 'ee_frame_name',
-        'moveit_servo.robot_link_command_frame': 'robot_link_command_frame',
-        'moveit_servo.command_out_topic': 'command_out_topic',
+        "moveit_servo.move_group_name": "move_group_name",
+        "moveit_servo.planning_frame": "planning_frame",
+        "moveit_servo.ee_frame_name": "ee_frame_name",
+        "moveit_servo.robot_link_command_frame": "robot_link_command_frame",
+        "moveit_servo.command_out_topic": "command_out_topic",
     }
     for param_key, arg_name in override_map.items():
         value = LaunchConfiguration(arg_name).perform(context)
         if value:
             servo_params[param_key] = value
 
-    kinematics_yaml = load_yaml_file(kinematics_yaml_file)
-    robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
+    try:
+        with open(kinematics_yaml_file) as f:
+            kinematics_yaml = yaml.safe_load(f)
+    except OSError:
+        kinematics_yaml = None
+    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
 
     servo_node = Node(
-        package='moveit_servo',
-        executable='servo_node_main',
+        package="moveit_servo",
+        executable="servo_node_main",
         name=servo_node_name,
         parameters=[
             servo_params,
-            {'robot_description': robot_description},
-            {'robot_description_semantic': robot_description_semantic},
+            {"robot_description": robot_description},
+            {"robot_description_semantic": robot_description_semantic},
             robot_description_kinematics,
-            {'use_sim_time': sim}
+            {"use_sim_time": sim}
         ],
-        output='screen',
+        output="screen",
     )
 
     return [servo_node]
@@ -81,39 +86,39 @@ def generate_launch_description():
 
     declared_arguments = [
         DeclareLaunchArgument(
-            'robot_description', default_value='',
-            description='URDF robot description as a string.'),
+            "robot_description", default_value="",
+            description="URDF robot description as a string."),
         DeclareLaunchArgument(
-            'robot_description_semantic', default_value='',
-            description='SRDF robot semantic description as a string.'),
+            "robot_description_semantic", default_value="",
+            description="SRDF robot semantic description as a string."),
         DeclareLaunchArgument(
-            'moveit_config_package', default_value='denso_robot_moveit_config',
-            description='Package containing MoveIt configuration files.'),
+            "moveit_config_package", default_value="denso_robot_moveit_config",
+            description="Package containing MoveIt configuration files."),
         DeclareLaunchArgument(
-            'kinematics_yaml_file', default_value='',
-            description='Full path to the kinematics.yaml configuration file.'),
+            "kinematics_yaml_file", default_value="",
+            description="Full path to the kinematics.yaml configuration file."),
         DeclareLaunchArgument(
-            'sim', default_value='true',
-            description='Use simulation time.'),
+            "sim", default_value="true",
+            description="Use simulation time."),
         DeclareLaunchArgument(
-            'servo_node_name', default_value='servo_node_main',
-            description='Name for this servo node instance.'),
+            "servo_node_name", default_value="servo_node_main",
+            description="Name for this servo node instance."),
         # Optional overrides for multi-arm setups
         DeclareLaunchArgument(
-            'move_group_name', default_value='',
-            description='Override: MoveIt move group name.'),
+            "move_group_name", default_value="",
+            description="Override: MoveIt move group name."),
         DeclareLaunchArgument(
-            'planning_frame', default_value='',
-            description='Override: planning reference frame.'),
+            "planning_frame", default_value="",
+            description="Override: planning reference frame."),
         DeclareLaunchArgument(
-            'ee_frame_name', default_value='',
-            description='Override: end-effector frame name.'),
+            "ee_frame_name", default_value="",
+            description="Override: end-effector frame name."),
         DeclareLaunchArgument(
-            'robot_link_command_frame', default_value='',
-            description='Override: robot link command frame.'),
+            "robot_link_command_frame", default_value="",
+            description="Override: robot link command frame."),
         DeclareLaunchArgument(
-            'command_out_topic', default_value='',
-            description='Override: command output topic for the trajectory controller.'),
+            "command_out_topic", default_value="",
+            description="Override: command output topic for the trajectory controller."),
     ]
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

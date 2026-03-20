@@ -24,21 +24,21 @@ def generate_launch_description():
 
     declared_arguments = [
         DeclareLaunchArgument(
-            'robot_description', default_value='',
-            description='URDF robot description as a string.'),
+            "robot_description", default_value="",
+            description="URDF robot description as a string."),
         DeclareLaunchArgument(
-            'sim', default_value='true',
-            description='Use simulation time.'),
+            "sim", default_value="true",
+            description="Use simulation time."),
     ]
 
-    robot_description = LaunchConfiguration('robot_description')
-    sim = LaunchConfiguration('sim')
+    robot_description = LaunchConfiguration("robot_description")
+    sim = LaunchConfiguration("sim")
 
     robot_state_publisher_node = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='both',
-        parameters=[{'use_sim_time': sim}, {'robot_description': robot_description}]
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
+        parameters=[{"use_sim_time": sim}, {"robot_description": robot_description}]
     )
 
     return LaunchDescription(declared_arguments + [robot_state_publisher_node])

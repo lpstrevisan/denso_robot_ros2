@@ -23,19 +23,15 @@ from typing import Iterable, Text
 from launch.some_substitutions_type import SomeSubstitutionsType
 
 
-def load_yaml_file(file_path):
-    """Load a YAML file from its absolute path."""
-    try:
-        with open(file_path) as file:
-            return yaml.safe_load(file)
-    except OSError:
-        return None
-
-
 def load_yaml(package_name, file_path):
     """Load a YAML file from a ROS package share directory."""
     package_path = get_package_share_directory(package_name)
-    return load_yaml_file(os.path.join(package_path, file_path))
+    absolute_file_path = os.path.join(package_path, file_path)
+    try:
+        with open(absolute_file_path) as file:
+            return yaml.safe_load(file)
+    except OSError:
+        return None
 
 
 class TextJoinSubstitution(Substitution):
@@ -61,7 +57,7 @@ class TextJoinSubstitution(Substitution):
         return self.__text
 
     def describe(self) -> Text:
-        return "LocalVar('{}')".format(' + '.join([s.describe() for s in self.substitutions]))
+        return "LocalVar('{}')".format(" + ".join([s.describe() for s in self.substitutions]))
 
     def perform(self, context: LaunchContext) -> Text:
         performed_substitutions = [sub.perform(context) for sub in self.__substitutions]
