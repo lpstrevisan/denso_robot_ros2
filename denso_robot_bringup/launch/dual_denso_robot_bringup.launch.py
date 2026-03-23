@@ -30,14 +30,11 @@ def launch_setup(context, *args, **kwargs):
     right_ip_address = LaunchConfiguration("right_ip_address").perform(context)
     send_format = LaunchConfiguration("send_format").perform(context)
     recv_format = LaunchConfiguration("recv_format").perform(context)
-    bcap_slave_control_cycle_msec = LaunchConfiguration(
-        "bcap_slave_control_cycle_msec").perform(context)
     description_package = LaunchConfiguration("description_package").perform(context)
     description_file = LaunchConfiguration("description_file").perform(context)
     moveit_config_package = LaunchConfiguration("moveit_config_package").perform(context)
     moveit_config_file = LaunchConfiguration("moveit_config_file").perform(context)
     namespace = LaunchConfiguration("namespace").perform(context)
-    rviz = LaunchConfiguration("rviz").perform(context)
     sim = LaunchConfiguration("sim").perform(context)
     basic_camera = LaunchConfiguration("basic_camera").perform(context)
     verbose = LaunchConfiguration("verbose").perform(context)
@@ -116,7 +113,7 @@ def launch_setup(context, *args, **kwargs):
             os.path.join(includes_dir, "robot_state_publisher.launch.py")),
         launch_arguments={
             "robot_description": robot_description_str,
-            "sim": sim,
+            "sim": LaunchConfiguration("sim"),
         }.items())
 
     # Dual controllers: pass both controller names as a space-separated list
@@ -126,8 +123,8 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             "robot_description": robot_description_str,
             "robot_controllers_file": robot_controllers_file,
-            "bcap_slave_control_cycle_msec": bcap_slave_control_cycle_msec,
-            "sim": sim,
+            "bcap_slave_control_cycle_msec": LaunchConfiguration("bcap_slave_control_cycle_msec"),
+            "sim": LaunchConfiguration("sim"),
             "controllers": left_robot_controller + " " + right_robot_controller,
         }.items())
 
@@ -137,21 +134,21 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             "robot_description": robot_description_str,
             "robot_description_semantic": robot_description_semantic_str,
-            "moveit_config_package": moveit_config_package,
+            "moveit_config_package": LaunchConfiguration("moveit_config_package"),
             "kinematics_yaml_file": kinematics_yaml_file,
             "moveit_controllers_file": moveit_controllers_file,
             "robot_limits_file": robot_limits_file,
-            "sim": sim,
+            "sim": LaunchConfiguration("sim"),
         }.items())
 
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(includes_dir, "rviz.launch.py")),
         launch_arguments={
-            "rviz": rviz,
+            "rviz": LaunchConfiguration("rviz"),
             "robot_description": robot_description_str,
             "robot_description_semantic": robot_description_semantic_str,
-            "moveit_config_package": moveit_config_package,
+            "moveit_config_package": LaunchConfiguration("moveit_config_package"),
             "kinematics_yaml_file": kinematics_yaml_file,
             "rviz_config_file": rviz_config_file,
         }.items())
@@ -160,11 +157,11 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(
             os.path.join(includes_dir, "gazebo.launch.py")),
         launch_arguments={
-            "basic_camera": basic_camera,
-            "model": model,
+            "basic_camera": LaunchConfiguration("basic_camera"),
+            "model": LaunchConfiguration("model"),
             "camera_topics": "/left_basic_camera /right_basic_camera",
         }.items(),
-        condition=IfCondition(sim))
+        condition=IfCondition(LaunchConfiguration("sim")))
 
     # Servo nodes: one per arm with arm-specific configuration overrides
     left_servo_launch = IncludeLaunchDescription(
@@ -173,9 +170,9 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             "robot_description": robot_description_str,
             "robot_description_semantic": robot_description_semantic_str,
-            "moveit_config_package": moveit_config_package,
+            "moveit_config_package": LaunchConfiguration("moveit_config_package"),
             "kinematics_yaml_file": kinematics_yaml_file,
-            "sim": sim,
+            "sim": LaunchConfiguration("sim"),
             "servo_node_name": "left_servo_node",
             "move_group_name": "left_arm",
             "planning_frame": "world",
@@ -190,9 +187,9 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             "robot_description": robot_description_str,
             "robot_description_semantic": robot_description_semantic_str,
-            "moveit_config_package": moveit_config_package,
+            "moveit_config_package": LaunchConfiguration("moveit_config_package"),
             "kinematics_yaml_file": kinematics_yaml_file,
-            "sim": sim,
+            "sim": LaunchConfiguration("sim"),
             "servo_node_name": "right_servo_node",
             "move_group_name": "right_arm",
             "planning_frame": "world",
