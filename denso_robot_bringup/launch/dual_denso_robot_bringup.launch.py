@@ -85,7 +85,7 @@ def launch_setup(context, *args, **kwargs):
     bringup_share = get_package_share_directory("denso_robot_bringup")
     includes_dir = os.path.join(bringup_share, "launch", "includes")
 
-    kinematics_yaml_file = os.path.join(moveit_share, "config", "dual", "kinematics.yaml")
+    kinematics_yaml_file = "config/dual/kinematics.yaml"
     moveit_controllers_file = os.path.join(
         moveit_share, "robots", model, "config", "dual", "moveit_controllers.yaml")
     robot_limits_file = os.path.join(

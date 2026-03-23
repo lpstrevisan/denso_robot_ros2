@@ -16,7 +16,6 @@
 
 import os
 import sys
-import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
@@ -40,11 +39,7 @@ def launch_setup(context, *args, **kwargs):
     kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file").perform(context)
     rviz_config_file = LaunchConfiguration("rviz_config_file").perform(context)
 
-    try:
-        with open(kinematics_yaml_file) as f:
-            kinematics_yaml = yaml.safe_load(f)
-    except OSError:
-        kinematics_yaml = None
+    kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
     robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
 
     ompl_planning_yaml = load_yaml(moveit_config_package, "config/ompl_planning.yaml")
@@ -98,7 +93,7 @@ def generate_launch_description():
             description="Package containing MoveIt configuration files."),
         DeclareLaunchArgument(
             "kinematics_yaml_file", default_value="",
-            description="Full path to the kinematics.yaml configuration file."),
+            description="Path to the kinematics.yaml configuration file, relative to the moveit_config_package share directory."),
         DeclareLaunchArgument(
             "rviz_config_file", default_value="",
             description="Full path to the RViz configuration file."),
