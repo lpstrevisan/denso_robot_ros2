@@ -21,6 +21,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from moveit_configs_utils import MoveItConfigsBuilder
 
 # Import shared utilities from parent launch directory
 _launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
@@ -57,8 +58,11 @@ def launch_setup(context, *args, **kwargs):
         if value:
             servo_params[param_key] = value
 
-    kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
-    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
+    moveit_configs = (
+        MoveItConfigsBuilder("denso_robot", package_name=moveit_config_package)
+        .robot_description_kinematics(file_path=kinematics_yaml_file)
+        .to_moveit_configs()
+    )
 
     servo_node = Node(
         package="moveit_servo",
@@ -68,7 +72,7 @@ def launch_setup(context, *args, **kwargs):
             servo_params,
             {"robot_description": robot_description},
             {"robot_description_semantic": robot_description_semantic},
-            robot_description_kinematics,
+            moveit_configs.robot_description_kinematics,
             {"use_sim_time": sim}
         ],
         output="screen",
