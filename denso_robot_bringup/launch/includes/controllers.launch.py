@@ -25,69 +25,90 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def launch_setup(context, *args, **kwargs):
-    robot_description = LaunchConfiguration("robot_description").perform(context)
-    robot_controllers_file = LaunchConfiguration("robot_controllers_file").perform(context)
-    bcap_slave_control_cycle_msec = LaunchConfiguration(
-        "bcap_slave_control_cycle_msec").perform(context)
-    sim = LaunchConfiguration("sim").perform(context)
-    controllers = LaunchConfiguration("controllers").perform(context).split()
+    robot_description = LaunchConfiguration("robot_description")
+    robot_controllers_path = LaunchConfiguration("robot_controllers_path")
+    bcap_slave_control_cycle_msec = LaunchConfiguration("bcap_slave_control_cycle_msec")
+    sim = LaunchConfiguration("sim")
 
-    denso_robot_core_pkg = get_package_share_directory("denso_robot_core")
+    controllers = LaunchConfiguration("controllers")
 
     denso_robot_control_parameters = {
         "denso_bcap_slave_control_cycle_msec": bcap_slave_control_cycle_msec,
-        "denso_config_file": PathJoinSubstitution(
-            [denso_robot_core_pkg, "config", "config.xml"])
+        "denso_config_file": PathJoinSubstitution([
+            get_package_share_directory("denso_robot_core"),
+            "config",
+            "config.xml"
+        ])
     }
 
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        condition=UnlessCondition(sim),
         parameters=[
-            {"robot_description": robot_description},
-            robot_controllers_file,
+            {"robot_description": robot_description.perform(context)},
+            robot_controllers_path,
             denso_robot_control_parameters
         ],
         output={
             "stdout": "screen",
             "stderr": "screen",
-        })
-
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["denso_joint_state_broadcaster", "--controller-manager", "/controller_manager"])
+        },
+        condition=UnlessCondition(sim)
+    )
 
     controller_spawners = [
         Node(
             package="controller_manager",
             executable="spawner",
-            arguments=[ctrl, "-c", "/controller_manager"])
-        for ctrl in controllers
+            arguments=[
+                ctrl,
+                "-c",
+                "/controller_manager"
+            ]
+        ) for ctrl in controllers.perform(context).split()
     ]
 
-    return [control_node, joint_state_broadcaster_spawner] + controller_spawners
+    return [control_node] + controller_spawners
 
 
 def generate_launch_description():
 
-    declared_arguments = [
+    declared_arguments = []
+
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "robot_description", default_value="",
-            description="URDF robot description as a string."),
+            "robot_description",
+            default_value="",
+            description="URDF robot description as a string."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "robot_controllers_file", default_value="",
-            description="Full path to the controllers YAML configuration file."),
+            "robot_controllers_path",
+            default_value="",
+            description="Full path to the controllers YAML configuration file."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "bcap_slave_control_cycle_msec", default_value="8.0",
-            description="Control cycle in milliseconds."),
+            "bcap_slave_control_cycle_msec",
+            default_value="8.0",
+            description="Control cycle in milliseconds."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "sim", default_value="true",
-            description="Simulation mode (skips the hardware ros2_control_node)."),
+            "sim",
+            default_value="true",
+            description="Simulation mode (skips the hardware ros2_control_node)."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "controllers", default_value="denso_joint_trajectory_controller",
-            description="Space-separated list of controller names to spawn."),
-    ]
+            "controllers",
+            default_value="",
+            description="Space-separated list of controller names to spawn."
+        )
+    )
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

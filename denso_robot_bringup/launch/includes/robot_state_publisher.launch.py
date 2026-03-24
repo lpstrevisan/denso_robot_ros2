@@ -15,30 +15,43 @@
 # Author: DENSO WAVE INCORPORATED
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-
-def generate_launch_description():
-
-    declared_arguments = [
-        DeclareLaunchArgument(
-            "robot_description", default_value="",
-            description="URDF robot description as a string."),
-        DeclareLaunchArgument(
-            "sim", default_value="true",
-            description="Use simulation time."),
-    ]
-
+def launch_setup(context, *args, **kwargs):
     robot_description = LaunchConfiguration("robot_description")
     sim = LaunchConfiguration("sim")
 
-    robot_state_publisher_node = Node(
+    robot_state_publisher = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         output="both",
-        parameters=[{"use_sim_time": sim}, {"robot_description": robot_description}]
+        parameters=[
+            {"robot_description": robot_description.perform(context)},
+            {"use_sim_time": sim}
+        ]
     )
 
-    return LaunchDescription(declared_arguments + [robot_state_publisher_node])
+    return [robot_state_publisher]
+
+def generate_launch_description():
+
+    declared_arguments = []
+
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_description",
+            default_value="",
+            description="URDF robot description as a string."
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "sim",
+            default_value="true", 
+            description="Use simulation time."
+        )
+    )
+
+    return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

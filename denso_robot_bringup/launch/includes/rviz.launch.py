@@ -18,85 +18,88 @@ import os
 import sys
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.conditions import IfCondition
+from launch.actions import DeclareLaunchArgument, OpaqueFunction+
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
-# Import shared utilities from parent launch directory
-_launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
-if _launch_dir not in sys.path:
-    sys.path.insert(0, _launch_dir)
-from launch_utils import load_yaml  # noqa: E402
-
+from launch_utils import load_yaml 
 
 def launch_setup(context, *args, **kwargs):
-    rviz = LaunchConfiguration("rviz").perform(context)
-    robot_description = LaunchConfiguration("robot_description").perform(context)
-    robot_description_semantic = LaunchConfiguration(
-        "robot_description_semantic").perform(context)
-    moveit_config_package = LaunchConfiguration("moveit_config_package").perform(context)
-    kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file").perform(context)
-    rviz_config_file = LaunchConfiguration("rviz_config_file").perform(context)
+    robot_description = LaunchConfiguration("robot_description")
+    robot_description_semantic = LaunchConfiguration("robot_description_semantic")
+    moveit_config_package = LaunchConfiguration("moveit_config_package")
+    kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file")
 
-    kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
-    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
+    kinematics_yaml = load_yaml(moveit_config_package.perform(context), kinematics_yaml_file)
 
-    ompl_planning_yaml = load_yaml(moveit_config_package, "config/ompl_planning.yaml")
+    ompl_planning_yaml = load_yaml(moveit_config_package.perform(context), "config/ompl_planning.yaml")
 
     ompl_planning_pipeline_config = {
         "move_group": {
             "planning_plugin": "ompl_interface/OMPLPlanner",
-            "request_adapters": (
-                "default_planner_request_adapters/AddTimeOptimalParameterization"
-                " default_planner_request_adapters/FixWorkspaceBounds"
-                " default_planner_request_adapters/FixStartStateBounds"
-                " default_planner_request_adapters/FixStartStateCollision"
-                " default_planner_request_adapters/FixStartStatePathConstraints"
-            ),
+            "request_adapters": "default_planner_request_adapters/AddTimeOptimalParameterization" \
+                + " default_planner_request_adapters/FixWorkspaceBounds" \
+                + " default_planner_request_adapters/FixStartStateBounds" \
+                + " default_planner_request_adapters/FixStartStateCollision" \
+                + " default_planner_request_adapters/FixStartStatePathConstraints",
             "start_state_max_bounds_error": 0.1,
         }
     }
     ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
 
-    rviz_node = Node(
+    rviz_config_file = PathJoinSubstitution([
+        FindPackageShare(moveit_config_package),
+        'rviz',
+        'view_robot.rviz'
+    ])
+
+    rviz = Node(
         package="rviz2",
-        condition=IfCondition(rviz),
         executable="rviz2",
         name="rviz2_moveit",
         output="log",
         arguments=["-d", rviz_config_file],
         parameters=[
-            {"robot_description": robot_description},
-            {"robot_description_semantic": robot_description_semantic},
+            {"robot_description": robot_description.perform(context)},
+            {"robot_description_semantic": robot_description_semantic.perfom(context)},
             ompl_planning_pipeline_config,
-            robot_description_kinematics
-        ])
+            {"robot_description_kinematics": kinematics_yaml}
+        ]
+    )
 
-    return [rviz_node]
+    return [rviz]
 
 
 def generate_launch_description():
 
-    declared_arguments = [
+    declared_arguments = []
+
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "rviz", default_value="false",
-            description="Launch RViz."),
+            "robot_description",
+            default_value="",
+            description="URDF robot description as a string."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "robot_description", default_value="",
-            description="URDF robot description as a string."),
+            "robot_description_semantic",
+            default_value="",
+            description="SRDF robot semantic description as a string."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "robot_description_semantic", default_value="",
-            description="SRDF robot semantic description as a string."),
+            "moveit_config_package",
+            default_value="denso_robot_moveit_config",
+            description="Package containing MoveIt configuration files."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "moveit_config_package", default_value="denso_robot_moveit_config",
-            description="Package containing MoveIt configuration files."),
-        DeclareLaunchArgument(
-            "kinematics_yaml_file", default_value="",
-            description="Path to the kinematics.yaml configuration file, relative to the moveit_config_package share directory."),
-        DeclareLaunchArgument(
-            "rviz_config_file", default_value="",
-            description="Full path to the RViz configuration file."),
-    ]
+            "kinematics_yaml_file",
+            default_value="",
+            description="Path to the kinematics.yaml configuration file, relative to the moveit_config_package share directory."
+        )
+    )
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

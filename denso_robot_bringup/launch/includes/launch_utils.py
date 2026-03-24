@@ -25,40 +25,49 @@ from launch.some_substitutions_type import SomeSubstitutionsType
 
 def load_yaml(package_name, file_path):
     """Load a YAML file from a ROS package share directory."""
+    
     package_path = get_package_share_directory(package_name)
     absolute_file_path = os.path.join(package_path, file_path)
+
     try:
-        with open(absolute_file_path) as file:
+        with open(absolute_file_path, "r") as file:
             return yaml.safe_load(file)
-    except OSError:
+    except EnvironmentError:  # parent of IOError, OSError *and* WindowsError where available
         return None
 
 
 class TextJoinSubstitution(Substitution):
-    """Substitution that joins a namespace prefix with a fixed text string.
-
-    Helpful for namespaces and/or MULTI-ROBOT applications.
-    """
+    """Substitution that join paths, in a platform independent way."""
 
     def __init__(
-            self, substitutions: Iterable[SomeSubstitutionsType], text: Text,
-            sequence: Text) -> None:
+        self, substitutions: Iterable[SomeSubstitutionsType],
+        text: Text,
+        sequence: Text
+    ) -> None:
+        
         super().__init__()
+        """Create a TextJoinSubstitution."""
+        
         from launch.utilities import normalize_to_list_of_substitutions
+        
         self.__substitutions = normalize_to_list_of_substitutions(substitutions)
         self.__text = text
         self.__sequence = sequence
 
     @property
     def substitutions(self) -> Iterable[Substitution]:
+        """Getter for variable_name."""
         return self.__substitutions
 
     def text(self) -> Text:
+        """Getter for text."""
         return self.__text
 
     def describe(self) -> Text:
-        return "LocalVar('{}')".format(" + ".join([s.describe() for s in self.substitutions]))
+        """Return a description of this substitution as a string."""
+        return "LocalVar('{}')".format(' + '.join([s.describe() for s in self.substitutions]))
 
     def perform(self, context: LaunchContext) -> Text:
+        """Perform the substitution by retrieving the local variable."""
         performed_substitutions = [sub.perform(context) for sub in self.__substitutions]
         return self.__sequence.join(performed_substitutions) + self.__sequence + self.__text

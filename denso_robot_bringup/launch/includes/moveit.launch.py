@@ -21,23 +21,17 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
-# Import shared utilities from parent launch directory
-_launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
-if _launch_dir not in sys.path:
-    sys.path.insert(0, _launch_dir)
-from launch_utils import load_yaml  # noqa: E402
+from launch_utils import load_yaml 
 
 
 def launch_setup(context, *args, **kwargs):
-    robot_description = LaunchConfiguration("robot_description").perform(context)
-    robot_description_semantic = LaunchConfiguration(
-        "robot_description_semantic").perform(context)
-    moveit_config_package = LaunchConfiguration("moveit_config_package").perform(context)
-    kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file").perform(context)
-    moveit_controllers_file = LaunchConfiguration("moveit_controllers_file").perform(context)
-    robot_limits_file = LaunchConfiguration("robot_limits_file").perform(context)
-    sim = LaunchConfiguration("sim").perform(context).lower() == "true"
+    robot_description = LaunchConfiguration("robot_description")
+    robot_description_semantic = LaunchConfiguration("robot_description_semantic")
+    moveit_config_package = LaunchConfiguration("moveit_config_package")
+    kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file")
+    moveit_controllers_file = LaunchConfiguration("moveit_controllers_file")
+    robot_limits_file = LaunchConfiguration("robot_limits_file")
+    sim = LaunchConfiguration("sim")
 
     kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
     robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
@@ -99,8 +93,8 @@ def launch_setup(context, *args, **kwargs):
         executable="move_group",
         output="screen",
         parameters=[
-            {"robot_description": robot_description},
-            {"robot_description_semantic": robot_description_semantic},
+            {"robot_description": robot_description.perform(context)},
+            {"robot_description_semantic": robot_description_semantic.perform(context)},
             robot_description_kinematics,
             robot_limits_file,
             ompl_planning_pipeline_config,
@@ -110,7 +104,8 @@ def launch_setup(context, *args, **kwargs):
             occupancy_map_monitor_parameters,
             planning_scene_monitor_parameters,
             {"use_sim_time": sim}
-        ])
+        ]
+    )
 
     return [move_group_node]
 

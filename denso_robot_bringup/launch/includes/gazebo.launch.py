@@ -24,10 +24,10 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 
 def launch_setup(context, *args, **kwargs):
-    basic_camera = LaunchConfiguration("basic_camera").perform(context)
-    model = LaunchConfiguration("model").perform(context)
-    camera_topics = LaunchConfiguration("camera_topics").perform(context).split()
-
+    model = LaunchConfiguration("model")
+    basic_camera = LaunchConfiguration("basic_camera")
+    camera_topics = LaunchConfiguration("camera_topics")
+    
     world = PathJoinSubstitution([
         FindPackageShare("denso_robot_gazebo"),
         "worlds",
@@ -43,8 +43,8 @@ def launch_setup(context, *args, **kwargs):
             ])
         ),
         launch_arguments={
-            "gz_args": ["-r", "-v4", " ", world]
-        }.items(),
+            "gz_args": ["-r -v4 ", world]
+        }.items()
         # '-r'   == run simulation on start (required for ros2_controllers to connect)
         # '-v 4' == verbose level 4 (maximum console output)
     )
@@ -52,7 +52,12 @@ def launch_setup(context, *args, **kwargs):
     spawn_entity = Node(
         package="ros_gz_sim",
         executable="create",
-        arguments=["-topic", "robot_description", "-name", model],
+        arguments=[
+            "-topic",
+            "robot_description",
+            "-name",
+            model
+        ],
         output="screen"
     )
 
@@ -61,7 +66,7 @@ def launch_setup(context, *args, **kwargs):
         package="ros_gz_image",
         executable="image_bridge",
         # camera_topics is a list of topic names defined in the camera .xacro file
-        arguments=camera_topics,
+        arguments=camera_topics.perform(context).split(),
         output="screen",
         condition=IfCondition(basic_camera)
     )
@@ -71,16 +76,28 @@ def launch_setup(context, *args, **kwargs):
 
 def generate_launch_description():
 
-    declared_arguments = [
+    declared_arguments = []
+
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "basic_camera", default_value="false",
-            description="Enable Gazebo-to-ROS camera image bridge."),
+            "basic_camera",
+            default_value="false",
+            description="Enable Gazebo-to-ROS camera image bridge."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "model", default_value="vs050",
-            description="Robot model name (used as the spawned entity name)."),
+            "model",
+            default_value="",
+            description="Robot model name (used as the spawned entity name)."
+        )
+    )
+    declared_arguments.append(
         DeclareLaunchArgument(
-            "camera_topics", default_value="/basic_camera",
-            description="Space-separated list of camera topic names for the image bridge."),
-    ]
+            "camera_topics",
+            default_value="/basic_camera",
+            description="Space-separated list of camera topic names for the image bridge."
+        )
+    )
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])
