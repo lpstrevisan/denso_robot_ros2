@@ -22,12 +22,12 @@ from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from moveit_configs_utils import MoveItConfigsBuilder
 
 # Import shared utilities from parent launch directory
 _launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
 if _launch_dir not in sys.path:
     sys.path.insert(0, _launch_dir)
+from launch_utils import load_yaml  # noqa: E402
 
 
 def launch_setup(context, *args, **kwargs):
@@ -39,12 +39,25 @@ def launch_setup(context, *args, **kwargs):
     kinematics_yaml_file = LaunchConfiguration("kinematics_yaml_file").perform(context)
     rviz_config_file = LaunchConfiguration("rviz_config_file").perform(context)
 
-    moveit_configs = (
-        MoveItConfigsBuilder("denso_robot", package_name=moveit_config_package)
-        .robot_description_kinematics(file_path=kinematics_yaml_file)
-        .planning_pipelines(pipelines=["ompl"])
-        .to_moveit_configs()
-    )
+    kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
+    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
+
+    ompl_planning_yaml = load_yaml(moveit_config_package, "config/ompl_planning.yaml")
+
+    ompl_planning_pipeline_config = {
+        "move_group": {
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": (
+                "default_planner_request_adapters/AddTimeOptimalParameterization"
+                " default_planner_request_adapters/FixWorkspaceBounds"
+                " default_planner_request_adapters/FixStartStateBounds"
+                " default_planner_request_adapters/FixStartStateCollision"
+                " default_planner_request_adapters/FixStartStatePathConstraints"
+            ),
+            "start_state_max_bounds_error": 0.1,
+        }
+    }
+    ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
 
     rviz_node = Node(
         package="rviz2",
@@ -56,8 +69,8 @@ def launch_setup(context, *args, **kwargs):
         parameters=[
             {"robot_description": robot_description},
             {"robot_description_semantic": robot_description_semantic},
-            moveit_configs.robot_description_kinematics,
-            moveit_configs.planning_pipelines,
+            ompl_planning_pipeline_config,
+            robot_description_kinematics
         ])
 
     return [rviz_node]

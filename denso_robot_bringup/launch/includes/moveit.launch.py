@@ -14,11 +14,19 @@
 #
 # Author: DENSO WAVE INCORPORATED
 
+import os
+import sys
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from moveit_configs_utils import MoveItConfigsBuilder
+
+# Import shared utilities from parent launch directory
+_launch_dir = os.path.join(get_package_share_directory("denso_robot_bringup"), "launch")
+if _launch_dir not in sys.path:
+    sys.path.insert(0, _launch_dir)
+from launch_utils import load_yaml  # noqa: E402
 
 
 def launch_setup(context, *args, **kwargs):
@@ -31,42 +39,77 @@ def launch_setup(context, *args, **kwargs):
     robot_limits_file = LaunchConfiguration("robot_limits_file").perform(context)
     sim = LaunchConfiguration("sim").perform(context).lower() == "true"
 
-    moveit_configs = (
-        MoveItConfigsBuilder("denso_robot", package_name=moveit_config_package)
-        .robot_description_kinematics(file_path=kinematics_yaml_file)
-        .trajectory_execution(moveit_manage_controllers=False)
-        .joint_limits(file_path=robot_limits_file)
-        .planning_pipelines(pipelines=["ompl"])
-        .planning_scene_monitor()
-        .to_moveit_configs()
-    )
+    kinematics_yaml = load_yaml(moveit_config_package, kinematics_yaml_file)
+    robot_description_kinematics = {"robot_description_kinematics": kinematics_yaml}
 
-    # Inject pre-built robot descriptions evaluated by the orchestrator
-    moveit_configs.robot_description = {"robot_description": robot_description}
-    moveit_configs.robot_description_semantic = {
-        "robot_description_semantic": robot_description_semantic
+    ompl_planning_pipeline_config = {
+        "move_group": {
+            "planning_plugin": "ompl_interface/OMPLPlanner",
+            "request_adapters": (
+                "default_planner_request_adapters/AddTimeOptimalParameterization"
+                " default_planner_request_adapters/FixWorkspaceBounds"
+                " default_planner_request_adapters/FixStartStateBounds"
+                " default_planner_request_adapters/FixStartStateCollision"
+                " default_planner_request_adapters/FixStartStatePathConstraints"
+            ),
+            "start_state_max_bounds_error": 0.1,
+        }
     }
-    # joint_limits YAML uses the move_group.ros__parameters namespace wrapper;
-    # clear it from the dict and pass as a file path below so the node loads it correctly.
-    moveit_configs.joint_limits = {}
+    ompl_planning_yaml = load_yaml(moveit_config_package, "config/ompl_planning.yaml")
+    ompl_planning_pipeline_config["move_group"].update(ompl_planning_yaml)
+
+    trajectory_execution = {
+        "moveit_manage_controllers": False,
+        "trajectory_execution.allowed_execution_duration_scaling": 1.2,
+        "trajectory_execution.allowed_goal_duration_margin": 0.5,
+        "trajectory_execution.allowed_start_tolerance": 0.01,
+    }
+
+    moveit_controllers = {
+        "moveit_controller_manager": (
+            "moveit_simple_controller_manager/MoveItSimpleControllerManager"
+        ),
+    }
+
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+        "planning_scene_monitor_options": {
+            "name": "planning_scene_monitor",
+            "robot_description": "robot_description",
+            "joint_state_topic": "/joint_states",
+            "attached_collision_object_topic": "/move_group/planning_scene_monitor",
+            "publish_planning_scene_topic": "/move_group/publish_planning_scene",
+            "monitored_planning_scene_topic": "/move_group/monitored_planning_scene",
+            "wait_for_initial_state_timeout": 10.0,
+        },
+    }
+
+    occupancy_map_monitor_parameters = {
+        "sensors": ["3D_sensor"],
+        "3D_sensor": {
+            "sensor_plugin": "",  # '~'
+        },
+    }
 
     move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
         output="screen",
         parameters=[
-            moveit_configs.to_dict(),
-            {
-                "moveit_controller_manager": (
-                    "moveit_simple_controller_manager/MoveItSimpleControllerManager"
-                ),
-                "trajectory_execution.allowed_execution_duration_scaling": 1.2,
-                "trajectory_execution.allowed_goal_duration_margin": 0.5,
-                "trajectory_execution.allowed_start_tolerance": 0.01,
-            },
-            moveit_controllers_file,
+            {"robot_description": robot_description},
+            {"robot_description_semantic": robot_description_semantic},
+            robot_description_kinematics,
             robot_limits_file,
-            {"use_sim_time": sim},
+            ompl_planning_pipeline_config,
+            trajectory_execution,
+            moveit_controllers,
+            moveit_controllers_file,
+            occupancy_map_monitor_parameters,
+            planning_scene_monitor_parameters,
+            {"use_sim_time": sim}
         ])
 
     return [move_group_node]
