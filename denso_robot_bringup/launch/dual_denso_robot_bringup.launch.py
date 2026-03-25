@@ -19,16 +19,15 @@ import os
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from typing import Text
 from launch.launch_context import LaunchContext
 from launch.substitution import Substitution
 from typing import Iterable
-from typing import Text
 from launch.some_substitutions_type import SomeSubstitutionsType
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
@@ -420,8 +419,6 @@ def generate_launch_description():
         ])
 
 # --------- Gazebo Nodes (only if 'sim:=true') ---------
-    ros_gz_sim = get_package_share_directory('ros_gz_sim')
-
     world = PathJoinSubstitution([
         FindPackageShare('denso_robot_gazebo'),
         'worlds',
@@ -454,7 +451,7 @@ def generate_launch_description():
         executable='image_bridge',
         arguments=['/left_basic_camera', '/right_basic_camera'], #camera topic name defined in the <topic> tag in the camera's .xacro file
         output='screen',
-        condition=IfCondition(sim and basic_camera)
+        condition=IfCondition(PythonExpression(["'", sim, "' == 'true' and '", basic_camera, "' == 'true'"]))
     )
 
     # Get parameters for the Servo node
