@@ -18,6 +18,7 @@
 import os
 import yaml
 from ament_index_python.packages import get_package_share_directory
+from moveit_configs_utils import MoveItConfigsBuilder
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.conditions import IfCondition, UnlessCondition
@@ -230,8 +231,14 @@ def generate_launch_description():
             'namespace:=', namespace, ' '
         ])
     robot_description_semantic = {'robot_description_semantic': robot_description_semantic_content}
-    kinematics_yaml = load_yaml('denso_robot_moveit_config', 'config/kinematics.yaml')
-    robot_description_kinematics = {'robot_description_kinematics': kinematics_yaml}
+
+    moveit_configs = (
+        MoveItConfigsBuilder('denso_robot', package_name='denso_robot_moveit_config')
+        .robot_description_kinematics()
+        .planning_pipelines(default_planning_pipeline='ompl', pipelines=['ompl'], load_all=False)
+        ._MoveItConfigsBuilder__moveit_configs
+    )
+    robot_description_kinematics = moveit_configs.robot_description_kinematics
 
     # Planning Configuration
     ompl_planning_pipeline_config = {
@@ -245,8 +252,9 @@ def generate_launch_description():
             'start_state_max_bounds_error': 0.1,
         }
     }
-    ompl_planning_yaml = load_yaml('denso_robot_moveit_config', 'config/ompl_planning.yaml')
-    ompl_planning_pipeline_config['move_group'].update(ompl_planning_yaml)
+    ompl_planning_pipeline_config['move_group'].update(
+        moveit_configs.planning_pipelines['ompl']
+    )
 
     # Trajectory Execution Configuration
     moveit_controllers = {
