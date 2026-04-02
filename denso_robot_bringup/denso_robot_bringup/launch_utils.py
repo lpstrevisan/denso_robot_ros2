@@ -84,8 +84,6 @@ def move_group(move_config, use_sim_time):
         output='screen',
         parameters=[
             move_config.to_dict(),
-            # moveit_controllers,
-            # trajectory_execution,
             planning_scene_monitor_parameters,
             occupancy_map_monitor_parameters,
             {'use_sim_time': use_sim_time}
@@ -101,7 +99,6 @@ def rviz(moveit_config, launch_rviz):
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        name='rviz2_moveit',
         condition=IfCondition(launch_rviz),
         output='log',
         arguments=['-d', rviz_config_file],
@@ -120,7 +117,7 @@ def static_tf(child_frame):
     static_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        name='static_transform_publisher',
+        name=f'static_transform_publisher_{child_frame}',
         output='log',
         arguments=[
             '--frame-id', 'world',
