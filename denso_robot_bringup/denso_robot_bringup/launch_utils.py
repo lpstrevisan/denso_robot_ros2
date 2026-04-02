@@ -17,6 +17,7 @@
 from launch_ros.actions import Node
 from launch.conditions import UnlessCondition
 from ament_index_python.packages import get_package_share_directory
+from launch_param_builder import ParameterBuilder
 
 def control_node(robot_description, robot_controllers_path, bcap_slave_control_cycle_msec, sim):
 
@@ -155,3 +156,27 @@ def robot_state_publisher(robot_description, use_sim_time):
     )
 
     return robot_state_publisher
+
+def moveit_servo(moveit_config, sim):
+
+    servo_params = (
+        ParameterBuilder('denso_robot_moveit_config')
+        .yaml(
+            file_path='config/moveit_servo.yaml'
+        )
+        .parameters('use_gazebo', sim)
+        .to_dict()
+    )
+
+    servo_node = Node(
+        package='moveit_servo',
+        executable='servo_node_main',
+        parameters=[
+            servo_params,
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            {'use_sim_time': sim}
+        ],
+        output='screen',
+    )
