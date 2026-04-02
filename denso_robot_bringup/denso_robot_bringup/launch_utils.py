@@ -15,7 +15,7 @@
 # Author: DENSO WAVE INCORPORATED
 
 from launch_ros.actions import Node
-from launch.conditions import UnlessCondition
+from launch.conditions import IfCondition, UnlessCondition
 from ament_index_python.packages import get_package_share_directory
 from launch_param_builder import ParameterBuilder
 
@@ -58,7 +58,7 @@ def controller_spawner(controller):
 
     return controller_spawner
 
-def move_group(move_config, use_sim_time):
+def move_group(move_config, use_sim_time, moveit_controllers_file=None):
     # Trajectory Execution Configuration
     moveit_controllers = {
         'moveit_controller_manager': 'moveit_simple_controller_manager' \
@@ -91,18 +91,23 @@ def move_group(move_config, use_sim_time):
         },
     }
 
+    parameters = [
+        move_config.to_dict(),
+        moveit_controllers,
+        trajectory_execution,
+        planning_scene_monitor_parameters,
+        occupancy_map_monitor_parameters,
+        {'use_sim_time': use_sim_time}
+    ]
+
+    if moveit_controllers_file is not None:
+        parameters.append(moveit_controllers_file)
+
     move_group = Node(
         package='moveit_ros_move_group',
         executable='move_group',
         output='screen',
-        parameters=[
-            move_config.to_dict(),
-            moveit_controllers,
-            trajectory_execution,
-            planning_scene_monitor_parameters,
-            occupancy_map_monitor_parameters,
-            {'use_sim_time': use_sim_time}
-        ]
+        parameters=parameters
     )
 
     return move_group

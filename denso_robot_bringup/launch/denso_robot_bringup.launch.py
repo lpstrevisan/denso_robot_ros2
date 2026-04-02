@@ -92,6 +92,13 @@ def launch_setup(context, *args, **kwargs):
         'config', 
         controllers_file
     ])
+    moveit_controllers_file = PathJoinSubstitution([
+        FindPackageShare(moveit_config_package),
+        'robots',
+        model,
+        'config',
+        'moveit_controllers.yaml'
+    ])
 
     controllers = [
         'denso_joint_trajectory_controller',
@@ -117,7 +124,7 @@ def launch_setup(context, *args, **kwargs):
         )
 
     nodes_to_start.append(
-        launch_utils.move_group(moveit_config, sim)
+        launch_utils.move_group(moveit_config, sim, moveit_controllers_file)
     )
     nodes_to_start.append(
         launch_utils.rviz(moveit_config, launch_rviz)
@@ -141,7 +148,7 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(sim)
     )
 
-    return nodes_to_start + gazebo
+    return nodes_to_start + [gazebo_launch]
 
 def generate_launch_description():
     declared_arguments = []
