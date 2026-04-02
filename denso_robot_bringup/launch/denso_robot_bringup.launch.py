@@ -14,7 +14,6 @@
 #
 # Author: DENSO WAVE INCORPORATED
 
-import os
 from pathlib import Path
 from launch import LaunchDescription
 from launch.conditions import IfCondition
@@ -65,14 +64,14 @@ def launch_setup(context, *args, **kwargs):
                 'sim': sim.perform(context),
                 'basic_camera': basic_camera.perform(context),
                 'xyz': xyz.perform(context),
-                'rpy': rpy.perform(context),
+                'rpy': rpy.perform(context)
             }
         )
         .robot_description_semantic(
-            file_path='srdf/denso_robot.srdf.xacro',
+            file_path=f'srdf/{moveit_config_file.perform(context)}',
             mappings={
                 'model': model.perform(context),
-                'namespace': namespace.perform(context),
+                'namespace': namespace.perform(context)
             }
         )
         .robot_description_kinematics(file_path='config/kinematics.yaml')
@@ -98,7 +97,7 @@ def launch_setup(context, *args, **kwargs):
     ])
 
     controllers = [
-        'denso_joint_trajectory_controller',
+        robot_controller.perform(context),
         'denso_joint_state_broadcaster'
     ]
 
@@ -140,7 +139,9 @@ def launch_setup(context, *args, **kwargs):
 
     gazebo_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            Path(get_package_share_directory('denso_robot_bringup')) / 'launch' / 'gazebo.launch.py'
+            Path(
+                get_package_share_directory('denso_robot_bringup')
+            ) / 'launch' / 'gazebo.launch.py'
         ),
         launch_arguments={
             'basic_camera': basic_camera,
@@ -273,7 +274,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'basic_camera',
             default_value='false',
-            description='Add basic_camera in J6'
+            description='Add basic_camera on end-effector'
         )
     )
     declared_arguments.append(
