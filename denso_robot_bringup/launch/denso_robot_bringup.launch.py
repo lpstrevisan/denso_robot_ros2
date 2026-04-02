@@ -1,25 +1,30 @@
 # Copyright (c) 2021 DENSO WAVE INCORPORATED
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
 # Author: DENSO WAVE INCORPORATED
 
+import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.conditions import IfCondition
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
 from denso_robot_bringup import launch_utils
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def launch_setup(context, *args, **kwargs):
     model = LaunchConfiguration('model')
@@ -66,7 +71,7 @@ def launch_setup(context, *args, **kwargs):
                 'namespace': namespace.perform(context),
             }
         )
-        .robot_description_kinematics(file_path="config/kinematics.yaml")
+        .robot_description_kinematics(file_path='config/kinematics.yaml')
         .joint_limits(
             file_path=f'robots/{model.perform(context)}/config/joint_limits.yaml'
         )
@@ -80,6 +85,14 @@ def launch_setup(context, *args, **kwargs):
         .to_moveit_configs()
     )
 
+    robot_controllers = PathJoinSubstitution([
+        FindPackageShare(moveit_config_package),
+        'robots',
+        model, 
+        'config', 
+        controllers_file
+    ])
+
     controllers = [
         'denso_joint_trajectory_controller',
         'denso_joint_state_broadcaster'
@@ -88,6 +101,15 @@ def launch_setup(context, *args, **kwargs):
     ###############################################################################################
 
     nodes_to_start = []
+
+    nodes_to_start.append(
+        launch_utils.control_node(
+            moveit_config.robot_description, 
+            robot_controllers.perform(context),
+            bcap_slave_control_cycle_msec.perform(context),
+            sim
+        )
+    )
 
     for controller in controllers:
         nodes_to_start.append(
@@ -104,25 +126,22 @@ def launch_setup(context, *args, **kwargs):
         launch_utils.static_tf('base_link')
     )
     nodes_to_start.append(
-        launch_utils.robot_state_publisher(move_config.robot_description, sim)
+        launch_utils.robot_state_publisher(moveit_config.robot_description, sim)
     )
-    get_package_share_directory('denso_robot_core') + '/config/config.xml'
 
-    # robot_controllers = PathJoinSubstitution([
-    #         FindPackageShare(moveit_config_package),
-    #         'robots',
-    #         model, 
-    #         'config', 
-    #         controllers_file
-    #     ])
+    gazebo_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('denso_robot_bringup'), 'launch', 'gazebo.launch.py')
+        ),
+        launch_arguments={
+            'basic_camera': basic_camera,
+            'model': model,
+            'camera_topics': '/basic_camera',
+        }.items(),
+        condition=IfCondition(sim)
+    )
 
-
-    # if not sim.perform(context):
-    #     nodes_to_start.append(
-    #         launch_common.control_node(moveit_config.robot_description)
-    #     )
-    
-    return nodes_to_start
+    return nodes_to_start + gazebo
 
 def generate_launch_description():
     declared_arguments = []
@@ -199,9 +218,9 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'namespace', 
             default_value='',
-            description="Prefix of the joint names, useful for" \
-                + " multi-robot setup. If changed than also joint names in the controllers'" \
-                + " configuration have to be updated."
+            description='Prefix of the joint names, useful for' \
+                + ' multi-robot setup. If changed than also joint names in the controllers' \
+                + ' configuration have to be updated.'
             )
         )
     declared_arguments.append(

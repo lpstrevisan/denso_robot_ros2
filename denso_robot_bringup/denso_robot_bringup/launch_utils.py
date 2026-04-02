@@ -15,8 +15,33 @@
 # Author: DENSO WAVE INCORPORATED
 
 from launch_ros.actions import Node
-from launch.conditions import IfCondition
+from launch.conditions import UnlessCondition
 from ament_index_python.packages import get_package_share_directory
+
+def control_node(robot_description, robot_controllers_path, bcap_slave_control_cycle_msec, sim):
+
+    denso_robot_control_parameters = {
+        'denso_bcap_slave_control_cycle_msec': bcap_slave_control_cycle_msec,
+        'denso_config_file': get_package_share_directory('denso_robot_core') 
+            + '/config/config.xml'
+    }
+
+    control_node = Node(
+        package='controller_manager',
+        executable='ros2_control_node',
+        condition=UnlessCondition(sim),
+        parameters=[
+            robot_description,
+            robot_controllers_path,
+            denso_robot_control_parameters
+        ],
+        output={
+            'stdout': 'screen',
+            'stderr': 'screen',
+        }
+    )
+
+    return control_node
 
 def controller_spawner(controller):
 
@@ -83,16 +108,13 @@ def move_group(move_config, use_sim_time):
 
 def rviz(moveit_config, launch_rviz):
 
-    rviz_config_file = (
-        get_package_share_directory('denso_robot_moveit_config')
-        + "/rviz/view_robot.rviz"
-    )
+    rviz_config_file = moveit_config.package_path / 'rviz/view_robot.rviz'
 
     rviz = Node(
         package='rviz2',
-        condition=IfCondition(launch_rviz),
         executable='rviz2',
         name='rviz2_moveit',
+        condition=IfCondition(launch_rviz),
         output='log',
         arguments=['-d', rviz_config_file],
         parameters=[
@@ -133,26 +155,3 @@ def robot_state_publisher(robot_description, use_sim_time):
     )
 
     return robot_state_publisher
-
-# def control_node(robot_description, robot_controllers_path, bcap_slave_control_cycle_msec, denso_config_file_path):
-
-#     denso_robot_control_parameters = {
-#         'denso_bcap_slave_control_cycle_msec': bcap_slave_control_cycle_msec,
-#         'denso_config_file': denso_config_file_path
-#     }
-
-#     control_node = Node(
-#         package='controller_manager',
-#         executable='ros2_control_node',
-#         parameters=[
-#             robot_description,
-#             robot_controllers_path,
-#             denso_robot_control_parameters
-#         ],
-#         output={
-#             'stdout': 'screen',
-#             'stderr': 'screen',
-#         }
-#     )
-
-#     return control_node
