@@ -58,7 +58,7 @@
 
    <gazebo>
 	   <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/dual_denso_robot_controllers.yaml</parameters>
+      <parameters>$(find denso_robot_moveit_config)/robots/$(arg model)/config/dual/denso_robot_controllers.yaml</parameters>
      </plugin>
    </gazebo>
 </robot>

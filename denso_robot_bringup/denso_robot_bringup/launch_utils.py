@@ -96,7 +96,7 @@ def move_group(move_config, use_sim_time):
 
 def rviz(moveit_config, launch_rviz):
 
-    rviz_config_file = moveit_config.package_path / 'rviz/view_robot.rviz'
+    rviz_config_file = moveit_config.package_path / 'rviz' / 'view_robot.rviz'
 
     rviz = Node(
         package='rviz2',
@@ -144,23 +144,42 @@ def robot_state_publisher(robot_description, use_sim_time):
 
     return robot_state_publisher
 
-def moveit_servo(moveit_config, sim):
+def moveit_servo(moveit_config, sim, arm=None):
 
     servo_params = (
-        ParameterBuilder('denso_robot_moveit_config')
+        ParameterBuilder(moveit_config.package_path.name)
         .yaml(
-            parameter_namespace="moveit_servo",
+            parameter_namespace='moveit_servo',
             file_path='config/moveit_servo.yaml'
         )
         .parameter('moveit_servo.use_gazebo', sim)
-        .to_dict()
     )
+
+    if arm == 'left':
+        servo_params = (
+            servo_params
+            .parameter('moveit_servo.move_group_name', 'left_arm')
+            .parameter('moveit_servo.planning_frame', 'world')
+            .parameter('moveit_servo.ee_frame_name', 'left_J6')
+            .parameter('moveit_servo.robot_link_command_frame', 'left_base_link')
+            .parameter('moveit_servo.command_out_topic', '/left_denso_joint_trajectory_controller/joint_trajectory')
+        )
+    elif arm == 'right':
+        servo_params = (
+            servo_params
+            .parameter('moveit_servo.move_group_name', 'right_arm')
+            .parameter('moveit_servo.planning_frame', 'world')
+            .parameter('moveit_servo.ee_frame_name', 'right_J6')
+            .parameter('moveit_servo.robot_link_command_frame', 'right_base_link')
+            .parameter('moveit_servo.command_out_topic', '/right_denso_joint_trajectory_controller/joint_trajectory')
+        )
 
     servo_node = Node(
         package='moveit_servo',
         executable='servo_node_main',
+        name=f'{arm}_servo_node' if arm else None,
         parameters=[
-            servo_params,
+            servo_params.to_dict(),
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
