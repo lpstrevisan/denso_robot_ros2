@@ -9,7 +9,7 @@ services:
     build: 
       context: ..
       dockerfile: .docker/Dockerfile
-    container_name: denso_container_cpu
+    image: denso_ros:humble
     privileged: true
     network_mode: host
     command: /bin/bash
@@ -24,7 +24,7 @@ services:
     build: 
       context: ..
       dockerfile: .docker/Dockerfile
-    container_name: denso_container_gpu
+    image: denso_ros:humble
     privileged: true
     network_mode: host
     command: /bin/bash
