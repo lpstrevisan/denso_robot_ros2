@@ -20,6 +20,7 @@ services:
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:?Set ROS_DOMAIN_ID before starting the container}
   gpu:
     build: 
       context: ..
@@ -42,5 +43,6 @@ services:
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:?Set ROS_DOMAIN_ID before starting the container}
       NVIDIA_VISIBLE_DEVICES: all
       NVIDIA_DRIVER_CAPABILITIES: all

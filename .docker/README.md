@@ -1,88 +1,63 @@
-# Denso Robot - Docker
+# DENSO Robot ROS 2 - Docker
 
-Ambiente Docker para robôs da DENSO com ROS2 Humble com suporte para RViz2 e Gazebo Fortress.
+Docker environment for DENSO robots with ROS 2 Humble, with support for RViz2 and Gazebo Fortress.
 
-## Pré-requisitos
+## Starting the Container
 
-### Testar X11
+Choose the command according to your hardware:
 
+**CPU only:**
 ```bash
-xeyes
+ROS_DOMAIN_ID=<your_id> docker compose run --name denso_ros_humble_cpu --build cpu
 ```
 
-Se aparecer uma janela com dois olhos que seguem o cursor, o X11 está funcionando. **Pule para "Primeira execução"**.
-
-### Se xeyes não funcionar
-
-Instale o X11:
-
+**With NVIDIA GPU:**
 ```bash
-sudo apt-get update
-sudo apt-get install -y x11-apps
-xeyes  # Testar novamente
+ROS_DOMAIN_ID=<your_id> docker compose run --name denso_ros_humble_gpu --build gpu
 ```
 
-## Uso do Docker
+> ⚠️ **ROS_DOMAIN_ID** isolates ROS 2 communication over the network using DDS. **To avoid interference between different computers running ROS 2 on the same network, a different domain ID should be set for each computer**. On Linux, safe values are **0–101** and **215–232**. For more details, see the [ROS 2 documentation](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html).
 
-### 1. Iniciar o Ambiente
 
-O comando `make up` configura automaticamente as permissões do X11(`xhost`), constrói a imagem (se necessário) e inicia o container em segundo plano.
+## Subsequent Executions
 
+**CPU:**
 ```bash
-make up
+docker start -ai denso_ros_humble_cpu
 ```
 
-### 2. Entrar no Container
-
-Para acessar o terminal do container que já está rodando:
-
+**NVIDIA GPU:**
 ```bash
-make attach
+docker start -ai denso_ros_humble_gpu
 ```
 
-### 3. Parar o Ambiente
-
-Para remover o container:
+To exit the container, run:
 ```bash
-make down
+exit
 ```
 
-## Dentro do Container
+### Available Tools
 
-Dentro do container execute:
-```bash
-source install/setup.bash
-```
-
-### Ferramentas disponíveis
-
-* **Terminator**: Terminal com suporte a múltiplas abas e divisão de tela.
+* **Terminator**: terminal with tab and split-screen support.
 ```bash
 terminator -u
 ```
 
-* **Nano**: Editor de texto via terminal.
+## Running ROS 2 with DENSO
+Inside the container, run:
 ```bash
-nano src/denso_robot_ros2/your_file.py
+source install/setup.bash
 ```
 
-## Para rodar o ROS2 no DENSO
+and
 
 ```bash
 ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=<robot_model> sim:=<boolean> basic_camera:=<boolean> ip_address:=<robot_ip_address>
 ```
 
-- `model` (**obrigatório**) - o modelo do robô DENSO ("cobotta", "vs060", "vs050").
-- `ip_address` (se `sim:=false`) - endereço IP do robô.
-- `sim` (default: _true_) - se o robô está simulado (Gazebo) ou se um controlador RC8 está conectado
-- `basic_camera` (default: _false_) - se o robô simulado (Gazebo) tem uma câmera anexada à sua Junta 6
+- `model` (**required**) — robot model (`"cobotta"`, `"vs060"`, `"vs050"`).
+- `ip_address` (if `sim:=false`) — robot IP address.
+- `sim` (default: _true_) — whether the robot is simulated (Gazebo) or connected via RC8 controller.
+- `basic_camera` (default: _false_) — whether the simulated robot has a camera attached to Joint 6.
 
-Exemplo de execução:
-
-```bash
-ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:="vs050" sim:=true basic_camera:=true
-```
-
-Para mais informações, consulte:
-- [slaveMode robot control](https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2/blob/vs050_descriptions_gz_fortress/README.md)
-
+For more information, see [slaveMode robot control](../denso_robot_control/README.md).
