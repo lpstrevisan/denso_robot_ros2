@@ -11,7 +11,7 @@ COPY . src/
 
 RUN apt-get update -q && apt-get install -q -y --no-install-recommends \
     ros-$ROS_DISTRO-moveit \
-    ros-$ROS_DISTRO-moveit-servo \  
+    ros-$ROS_DISTRO-moveit-servo \
     ros-$ROS_DISTRO-ros2-control \
     ros-$ROS_DISTRO-ros2-controllers \
     terminator \

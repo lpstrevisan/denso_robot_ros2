@@ -60,4 +60,4 @@ ros2 launch denso_robot_bringup denso_robot_bringup.launch.py model:=<robot_mode
 - `sim` (default: _true_) — whether the robot is simulated (Gazebo) or connected via RC8 controller.
 - `basic_camera` (default: _false_) — whether the simulated robot has a camera attached to Joint 6.
 
-For more information, see [slaveMode robot control](../denso_robot_control/README.md).
+For more information, see [SlaveMode robot control](../denso_robot_control/README.md).

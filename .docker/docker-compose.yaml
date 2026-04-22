@@ -12,6 +12,11 @@ services:
     image: denso_ros:humble
     privileged: true
     network_mode: host
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      memlock: -1
     command: /bin/bash
     volumes:
       - ../:/root/denso_ws/src
@@ -28,6 +33,11 @@ services:
     image: denso_ros:humble
     privileged: true
     network_mode: host
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      memlock: -1
     command: /bin/bash
     deploy:
       resources:
