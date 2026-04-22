@@ -106,8 +106,7 @@ def launch_setup(context, *args, **kwargs):
     nodes_to_start = []
 
     nodes_to_start.append(
-        launch_utils.control_node(
-            moveit_config.robot_description, 
+        launch_utils.control_node( 
             robot_controllers.perform(context),
             bcap_slave_control_cycle_msec,
             sim

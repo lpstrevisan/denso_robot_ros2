@@ -19,7 +19,7 @@ from launch_param_builder import ParameterBuilder
 from launch.conditions import IfCondition, UnlessCondition
 from ament_index_python.packages import get_package_share_directory
 
-def control_node(robot_description, robot_controllers_path, bcap_slave_control_cycle_msec, sim):
+def control_node(robot_controllers_path, bcap_slave_control_cycle_msec, sim):
 
     denso_robot_control_parameters = {
         'denso_bcap_slave_control_cycle_msec': bcap_slave_control_cycle_msec,
@@ -32,9 +32,11 @@ def control_node(robot_description, robot_controllers_path, bcap_slave_control_c
         executable='ros2_control_node',
         condition=UnlessCondition(sim),
         parameters=[
-            robot_description,
             robot_controllers_path,
             denso_robot_control_parameters
+        ],
+        remappings=[
+            ('~/robot_description', '/robot_description'),
         ],
         output={
             'stdout': 'screen',
