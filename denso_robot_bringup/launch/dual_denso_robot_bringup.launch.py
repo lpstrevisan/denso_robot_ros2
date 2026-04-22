@@ -85,7 +85,7 @@ def launch_setup(context, *args, **kwargs):
         .joint_limits(
             file_path=f'robots/{model.perform(context)}/config/dual/joint_limits.yaml'
         )
-        #.moveit_cpp()
+        .moveit_cpp(file_path='config/moveit_cpp.yaml')
         .trajectory_execution(
             file_path=f'robots/{model.perform(context)}/config/dual/moveit_controllers.yaml'
         )

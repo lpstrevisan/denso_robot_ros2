@@ -59,18 +59,6 @@ def controller_spawner(controller):
     return controller_spawner
 
 def move_group(move_config, use_sim_time):
-    planning_scene_monitor_parameters = {
-        'planning_scene_monitor_options': {
-            'name': 'planning_scene_monitor',
-            'robot_description': 'robot_description',
-            'joint_state_topic': '/joint_states',
-            'attached_collision_object_topic': '/move_group/planning_scene_monitor',
-            'publish_planning_scene_topic': '/move_group/publish_planning_scene',
-            'monitored_planning_scene_topic': '/move_group/monitored_planning_scene',
-            'wait_for_initial_state_timeout': 10.0,
-        },
-    }
-
     occupancy_map_monitor_parameters = {
         'sensors': ['3D_sensor'],
         '3D_sensor': {
@@ -84,7 +72,6 @@ def move_group(move_config, use_sim_time):
         output='screen',
         parameters=[
             move_config.to_dict(),
-            planning_scene_monitor_parameters,
             occupancy_map_monitor_parameters,
             {'use_sim_time': use_sim_time}
         ]
