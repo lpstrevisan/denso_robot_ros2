@@ -84,7 +84,7 @@ def launch_setup(context, *args, **kwargs):
         )
         #.planning_scene_monitor()
         .planning_pipelines(pipelines=['ompl'])
-        #.pilz_cartesian_limits()
+        .pilz_cartesian_limits(file_path='config/pilz_cartesian_limits.yaml')
         .to_moveit_configs()
     )
 

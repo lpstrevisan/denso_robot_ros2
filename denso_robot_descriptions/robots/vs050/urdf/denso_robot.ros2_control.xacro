@@ -21,7 +21,7 @@
                        recv_format
                        controller_type
                        verbose
-                       initial_positions">
+                       initial_positions_file">
 
     <ros2_control name="${namespace}${name}" type="system">
 	  <!-- joint limits include -->
@@ -52,7 +52,7 @@
         </xacro:unless>
       </hardware>
 
-      <xacro:denso_robot_control_limits namespace="${namespace}" initial_positions="${initial_positions}" />
+      <xacro:denso_robot_control_limits namespace="${namespace}" initial_positions_file="${initial_positions_file}" />
     </ros2_control>
   </xacro:macro>
 </robot>

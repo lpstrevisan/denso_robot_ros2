@@ -41,10 +41,7 @@
   <xacro:arg name="verbose" default="false"/>
 
   <!-- initial position for simulations-->
-  <xacro:arg name="initial_positions_file" default="$(find denso_robot_descriptions)/robots/$(arg model)/initial_positions.yaml" />
-
-  <!-- convert to property to use substitution in function -->
-  <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)" />
+  <xacro:arg name="initial_positions_file" default="$(find denso_robot_moveit_config)/robots/$(arg model)/config/initial_positions.yaml" />
 
   <xacro:include filename="$(find denso_robot_descriptions)/robots/$(arg model)/urdf/denso_robot_transmissions.xacro" />
   <!-- robot kinematics include -->
@@ -78,7 +75,7 @@
                                   verbose="$(arg verbose)"
                                   send_format="$(arg send_format)"
                                   recv_format="$(arg recv_format)"
-                                  initial_positions="${xacro.load_yaml(initial_positions_file)}" />
+                                  initial_positions_file="$(arg initial_positions_file)" />
 
   <!-- Add URDF transmission elements (for ros_control) -->
   <xacro:denso_robot_arm_transmission namespace="${namespace}" hw_interface="$(arg transmission_hw_interface)" />
