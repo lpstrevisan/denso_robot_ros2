@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:macro name="denso_robot_arm_kinematics" params="namespace model parent *origin">
+
 		<joint name="${namespace}joint_w" type="fixed">
 			<xacro:insert_block name="origin" />
 			<parent link="${parent}"/>
@@ -25,6 +26,7 @@
 				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
 			</inertial>
 		</link>
+
 		<link name="${namespace}J1">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
@@ -52,6 +54,7 @@
 			<limit effort="1000" lower="-2.96705972839036" upper="2.96705972839036" velocity="3.73064127613788"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
+
 		<link name="${namespace}J2">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
@@ -79,6 +82,7 @@
 			<limit effort="1000" lower="-2.0943951023932" upper="2.0943951023932" velocity="2.48709418409192"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
+
 		<link name="${namespace}J3">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
@@ -106,6 +110,7 @@
 			<limit effort="1000" lower="-2.18166156499291" upper="2.70526034059121" velocity="2.71540943019156"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
+
 		<link name="${namespace}J4">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
@@ -133,6 +138,7 @@
 			<limit effort="1000" lower="-4.71238898038469" upper="4.71238898038469" velocity="3.73064127613788"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
+
 		<link name="${namespace}J5">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
@@ -160,6 +166,7 @@
 			<limit effort="1000" lower="-2.0943951023932" upper="2.0943951023932" velocity="2.87060410727889"/> <!-- effort value is arbitary for make gazebo simulation runs without gravity problems -->
 			<dynamics damping="0" friction="0"/>
 		</joint>
+    
 		<link name="${namespace}J6">
 			<visual>
 				<origin rpy="0 0 0" xyz="0 0 0"/>
