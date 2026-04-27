@@ -170,6 +170,7 @@ def moveit_servo(moveit_config, sim, arm=None):
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
+            {'use_intra_process_comms': True},
             {'use_sim_time': sim}
         ],
         output='screen',
