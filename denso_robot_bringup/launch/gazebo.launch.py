@@ -29,7 +29,7 @@ from launch.actions import (
 
 def launch_setup(context, *args, **kwargs):
     model = LaunchConfiguration('model')
-    basic_camera = LaunchConfiguration('basic_camera')
+    gz_cam = LaunchConfiguration('gz_cam')
     camera_topics = LaunchConfiguration('camera_topics')
     
     
@@ -63,7 +63,7 @@ def launch_setup(context, *args, **kwargs):
         # camera_topics is a list of topic names defined in the camera .xacro file
         arguments=camera_topics.perform(context).split(),
         output='screen',
-        condition=IfCondition(basic_camera)
+        condition=IfCondition(gz_cam)
     )
 
     return [gazebo, spawn_entity, ros_gz_image_bridge]
@@ -82,7 +82,7 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            'basic_camera',
+            'gz_cam',
             default_value='false',
             description='Enable Gazebo-to-ROS camera image bridge.'
         )
@@ -90,7 +90,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             'camera_topics',
-            default_value='/basic_camera',
+            default_value='/gz_cam',
             description='Space-separated list of camera topic names for the image bridge.'
         )
     )

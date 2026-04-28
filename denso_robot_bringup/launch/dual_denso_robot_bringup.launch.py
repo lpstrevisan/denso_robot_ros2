@@ -47,7 +47,7 @@ def launch_setup(context, *args, **kwargs):
     controllers_file = LaunchConfiguration('controllers_file')
     left_robot_controller = LaunchConfiguration('left_robot_controller')
     right_robot_controller = LaunchConfiguration('right_robot_controller')
-    basic_camera = LaunchConfiguration('basic_camera')
+    gz_cam = LaunchConfiguration('gz_cam')
     left_xyz = LaunchConfiguration('left_xyz')
     right_xyz = LaunchConfiguration('right_xyz')
     left_rpy = LaunchConfiguration('left_rpy')
@@ -67,7 +67,7 @@ def launch_setup(context, *args, **kwargs):
                 'namespace': namespace.perform(context),
                 'verbose': verbose.perform(context),
                 'sim': sim.perform(context),
-                'basic_camera': basic_camera.perform(context),
+                'gz_cam': gz_cam.perform(context),
                 'left_xyz': left_xyz.perform(context),
                 'right_xyz': right_xyz.perform(context),
                 'left_rpy': left_rpy.perform(context),
@@ -158,9 +158,9 @@ def launch_setup(context, *args, **kwargs):
             ) / 'launch' / 'gazebo.launch.py'
         ),
         launch_arguments={
-            'basic_camera': basic_camera,
+            'gz_cam': gz_cam,
             'model': model,
-            'camera_topics': '/left_basic_camera /right_basic_camera',
+            'camera_topics': '/left_gz_cam /right_gz_cam',
         }.items(),
         condition=IfCondition(sim)
     )
@@ -300,9 +300,9 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            'basic_camera',
+            'gz_cam',
             default_value='false',
-            description='Add basic_camera on end-effector'
+            description='Add gz_cam on end-effector'
         )
     )
     declared_arguments.append(
