@@ -2,7 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
     <!-- here you define the parameters you want your xacro file to receive. -->
-    <xacro:macro name="gz_cam" params="namespace end_effector">
+    <xacro:macro name="gz_cam" params="namespace">
 
     <!-- if your tool has meshes, define the path to it in geometry tag. -->
     <!-- see the vs050 robot urdf implementation as an example. -->
@@ -25,7 +25,7 @@
 
 	<joint name="${namespace}gz_cam_joint" type="fixed">
         <!-- here you define where your tool will connect. In this case, it's at joint 6. -->
-		<parent link="${namespace}${end_effector}"/> 
+		<parent link="${namespace}flange"/> 
 		<child link="${namespace}gz_cam_link"/>
 		<origin rpy="0 ${radians(-90)} 0" xyz="0 0 0.01"/>
 	</joint>

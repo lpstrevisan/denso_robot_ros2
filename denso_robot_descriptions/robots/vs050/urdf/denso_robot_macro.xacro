@@ -87,7 +87,7 @@
   </xacro:denso_robot_arm_kinematics>
 
   <xacro:if value="$(arg gz_cam)">
-    <xacro:gz_cam namespace="${namespace}" end_effector="J6" />
+    <xacro:gz_cam namespace="${namespace}" />
   </xacro:if>
   </xacro:macro>
 </robot>
