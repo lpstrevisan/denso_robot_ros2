@@ -31,9 +31,10 @@ def launch_setup(context, *args, **kwargs):
     model = LaunchConfiguration('model')
     gz_cam = LaunchConfiguration('gz_cam')
     camera_topics = LaunchConfiguration('camera_topics')
+    gz_world = LaunchConfiguration('gz_world')
     
     
-    world = Path(get_package_share_directory('denso_robot_gazebo')) / 'worlds' / 'empty_with_sensor_support.sdf'
+    world = Path(get_package_share_directory('denso_robot_gazebo')) / 'worlds' / gz_world.perform(context)
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -92,6 +93,13 @@ def generate_launch_description():
             'camera_topics',
             default_value='/gz_cam',
             description='Space-separated list of camera topic names for the image bridge.'
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'gz_world',
+            default_value='empty_with_sensor_support.sdf',
+            description='Name of the Gazebo world file to be loaded.'
         )
     )
 

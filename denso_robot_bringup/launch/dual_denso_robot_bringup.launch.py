@@ -48,6 +48,7 @@ def launch_setup(context, *args, **kwargs):
     left_robot_controller = LaunchConfiguration('left_robot_controller')
     right_robot_controller = LaunchConfiguration('right_robot_controller')
     gz_cam = LaunchConfiguration('gz_cam')
+    gz_world = LaunchConfiguration('gz_world')
     left_xyz = LaunchConfiguration('left_xyz')
     right_xyz = LaunchConfiguration('right_xyz')
     left_rpy = LaunchConfiguration('left_rpy')
@@ -161,6 +162,7 @@ def launch_setup(context, *args, **kwargs):
             'gz_cam': gz_cam,
             'model': model,
             'camera_topics': '/left_gz_cam /right_gz_cam',
+            'gz_world': gz_world
         }.items(),
         condition=IfCondition(sim)
     )
@@ -303,6 +305,13 @@ def generate_launch_description():
             'gz_cam',
             default_value='false',
             description='Add gz_cam on end-effector'
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'gz_world',
+            default_value='empty_with_sensor_support.sdf',
+            description='Name of the Gazebo world file to be loaded.'
         )
     )
     declared_arguments.append(
