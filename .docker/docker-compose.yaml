@@ -1,0 +1,58 @@
+# Example command:
+#   on a NVIDIA system:
+#   docker compose run gpu
+#   without discrete graphics:
+#   docker compose run cpu
+
+services:
+  cpu:
+    build: 
+      context: ..
+      dockerfile: .docker/Dockerfile
+    image: denso_ros:humble
+    privileged: true
+    network_mode: host
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      memlock: -1
+    command: /bin/bash
+    volumes:
+      - ../:/root/denso_ws/src
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $XAUTHORITY:/root/.Xauthority
+    environment:
+      QT_X11_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:?Set ROS_DOMAIN_ID before starting the container}
+  gpu:
+    build: 
+      context: ..
+      dockerfile: .docker/Dockerfile
+    image: denso_ros:humble
+    privileged: true
+    network_mode: host
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      rtprio: 99
+      memlock: -1
+    command: /bin/bash
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ../:/root/denso_ws/src
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $XAUTHORITY:/root/.Xauthority
+    environment:
+      QT_X11_NO_MITSHM: 1
+      DISPLAY: $DISPLAY
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:?Set ROS_DOMAIN_ID before starting the container}
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: all
