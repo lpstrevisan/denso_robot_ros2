@@ -45,7 +45,8 @@ def launch_setup(context, *args, **kwargs):
     verbose = LaunchConfiguration('verbose')
     controllers_file = LaunchConfiguration('controllers_file')
     robot_controller = LaunchConfiguration('robot_controller')
-    basic_camera = LaunchConfiguration('basic_camera')
+    gz_cam = LaunchConfiguration('gz_cam')
+    gz_world = LaunchConfiguration('gz_world')
     xyz = LaunchConfiguration('xyz')
     rpy = LaunchConfiguration('rpy')
 
@@ -62,7 +63,7 @@ def launch_setup(context, *args, **kwargs):
                 'namespace': namespace.perform(context),
                 'verbose': verbose.perform(context),
                 'sim': sim.perform(context),
-                'basic_camera': basic_camera.perform(context),
+                'gz_cam': gz_cam.perform(context),
                 'xyz': xyz.perform(context),
                 'rpy': rpy.perform(context)
             }
@@ -143,9 +144,10 @@ def launch_setup(context, *args, **kwargs):
             ) / 'launch' / 'gazebo.launch.py'
         ),
         launch_arguments={
-            'basic_camera': basic_camera,
+            'gz_cam': gz_cam,
             'model': model,
-            'camera_topics': '/basic_camera',
+            'camera_topics': '/gz_cam',
+            'gz_world': gz_world,
         }.items(),
         condition=IfCondition(sim)
     )
@@ -271,9 +273,16 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            'basic_camera',
+            'gz_cam',
             default_value='false',
-            description='Add basic_camera on end-effector'
+            description='Add gz_cam on end-effector'
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'gz_world',
+            default_value='empty_with_sensor_support.sdf',
+            description='Name of the Gazebo world file to be loaded.'
         )
     )
     declared_arguments.append(

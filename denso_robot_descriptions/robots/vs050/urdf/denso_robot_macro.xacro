@@ -18,7 +18,7 @@
                                           *origin
                                           transmission_hw_interface:=hardware_interface/PositionJointInterface
                                           sim:=false
-                                          basic_camera:=false
+                                          gz_cam:=false
                                           ip_address
                                           send_format
                                           recv_format
@@ -51,9 +51,9 @@
 
   <!-- For other tools, modify the filename parameter to the path of your tool's xacro file. -->
   <!-- The line with tag xacro:tool passes the parameters defined in your tool's xacro file -->
-  <!-- (see basic_camera.xacro as an example implementation) -->
-  <xacro:if value="$(arg basic_camera)">
-    <xacro:include filename="$(find denso_robot_gazebo)/sensors/basic_camera/urdf/basic_camera.xacro" />
+  <!-- (see gz_cam.xacro as an example implementation) -->
+  <xacro:if value="$(arg gz_cam)">
+    <xacro:include filename="$(find denso_robot_gazebo)/sensors/gz_cam/urdf/gz_cam.xacro" />
   </xacro:if>
     
   <!-- ros2 control instance -->
@@ -86,8 +86,8 @@
     <xacro:insert_block name="origin" />
   </xacro:denso_robot_arm_kinematics>
 
-  <xacro:if value="$(arg basic_camera)">
-    <xacro:basic_camera namespace="${namespace}" end_effector="J6" />
+  <xacro:if value="$(arg gz_cam)">
+    <xacro:gz_cam namespace="${namespace}" />
   </xacro:if>
   </xacro:macro>
 </robot>
