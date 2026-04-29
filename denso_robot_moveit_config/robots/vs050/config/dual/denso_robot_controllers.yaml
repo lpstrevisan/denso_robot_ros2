@@ -26,7 +26,13 @@ left_denso_joint_trajectory_controller:
     state_interfaces:
       - position
       - velocity
-    allow_nonzero_velocity_at_trajectory_end: true
+    state_publish_rate: 1000.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    open_loop_control: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
 
 right_denso_joint_trajectory_controller:
   ros__parameters:
@@ -42,4 +48,10 @@ right_denso_joint_trajectory_controller:
     state_interfaces:
       - position
       - velocity
-    allow_nonzero_velocity_at_trajectory_end: true
+    state_publish_rate: 1000.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    open_loop_control: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
