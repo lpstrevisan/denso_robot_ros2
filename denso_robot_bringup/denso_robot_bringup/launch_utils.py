@@ -81,7 +81,7 @@ def move_group(move_config, use_sim_time):
 
     return move_group
 
-def rviz(moveit_config, launch_rviz):
+def rviz(moveit_config, launch_rviz, use_sim_time):
 
     rviz_config_file = moveit_config.package_path / 'rviz' / 'view_robot.rviz'
 
@@ -95,7 +95,8 @@ def rviz(moveit_config, launch_rviz):
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.planning_pipelines,
-            moveit_config.robot_description_kinematics
+            moveit_config.robot_description_kinematics,
+            {'use_sim_time': use_sim_time}
         ]
     )
 
@@ -169,6 +170,7 @@ def moveit_servo(moveit_config, sim, arm=None):
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
+            {'use_intra_process_comms': True},
             {'use_sim_time': sim}
         ],
         output='screen',

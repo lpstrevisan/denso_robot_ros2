@@ -132,7 +132,7 @@ def launch_setup(context, *args, **kwargs):
         launch_utils.move_group(moveit_config, sim)
     )
     nodes_to_start.append(
-        launch_utils.rviz(moveit_config, launch_rviz)
+        launch_utils.rviz(moveit_config, launch_rviz, sim)
     )
     nodes_to_start.append(
          launch_utils.static_tf('left_base_link')
