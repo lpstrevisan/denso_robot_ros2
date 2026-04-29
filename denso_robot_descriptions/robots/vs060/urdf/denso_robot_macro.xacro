@@ -57,7 +57,7 @@
   </xacro:if>
     
   <!-- ros2 control instance -->
-  <xacro:denso_robot_ros2_control name="VS050" 
+  <xacro:denso_robot_ros2_control name="VS060" 
                                   namespace="${namespace}"
                                   sim="$(arg sim)"
                                   model="$(arg model)"
