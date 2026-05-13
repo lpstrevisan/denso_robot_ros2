@@ -140,6 +140,8 @@
  * @brief  A type definition for the ROBOTalk packet.
  * @note   The ROBOTalk packet's byte order is big endian.
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 union RTK_PACKET
 {
   struct
@@ -153,6 +155,7 @@ union RTK_PACKET
   };
   uint8_t buf[RTK_SIZE_PACKET];  /**< Buffer. */
 };
+#pragma GCC diagnostic pop
 
 #ifdef __cplusplus
 extern "C"

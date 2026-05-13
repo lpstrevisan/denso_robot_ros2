@@ -202,7 +202,7 @@ typedef int32_t HRESULT;
  * @def   OSERR2HRESULT(err)
  * @brief A macro that returns HREUSLT(0x8091) which means OS error.
  */
-#define OSERR2HRESULT(err) (((err) & 0x0000FFFF) | 0x80910000)
+#define OSERR2HRESULT(err) ((uint32_t)(((err) & 0x0000FFFF) | 0x80910000))
 
 #ifndef __wtypes_h__
 
@@ -303,6 +303,8 @@ typedef struct SAFEARRAY
  * @struct VARIANT
  * @brief  A type definition for the multi type variable.
  */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef struct VARIANT
 {
   uint16_t vt; /**< Variant type */
@@ -325,6 +327,7 @@ typedef struct VARIANT
     SAFEARRAY* parray;    /**< VT_ARRAY */
   };
 } VARIANT;
+#pragma GCC diagnostic pop
 
 #endif /* __oaidl_h__ */
 
