@@ -57,6 +57,13 @@ def launch_setup(context, *args, **kwargs):
         output='screen'
     )
 
+    ros_gz_clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
     # Bridge Gazebo camera topics to ROS only when a camera is requested
     ros_gz_image_bridge = Node(
         package='ros_gz_image',
@@ -67,7 +74,7 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(gz_cam)
     )
 
-    return [gazebo, spawn_entity, ros_gz_image_bridge]
+    return [gazebo, spawn_entity, ros_gz_clock_bridge, ros_gz_image_bridge]
 
 
 def generate_launch_description():

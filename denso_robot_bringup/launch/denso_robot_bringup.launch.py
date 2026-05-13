@@ -116,7 +116,7 @@ def launch_setup(context, *args, **kwargs):
 
     for controller in controllers:
         nodes_to_start.append(
-            launch_utils.controller_spawner(controller)
+            launch_utils.controller_spawner(controller, sim)
         )
 
     nodes_to_start.append(
@@ -131,9 +131,9 @@ def launch_setup(context, *args, **kwargs):
     nodes_to_start.append(
         launch_utils.robot_state_publisher(moveit_config.robot_description, sim)
     )
-    nodes_to_start.append(
-        launch_utils.moveit_servo(moveit_config, sim)
-    )
+    # nodes_to_start.append(
+    #     launch_utils.moveit_servo(moveit_config, sim)
+    # )
 
     ###############################################################################################
 
