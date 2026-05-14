@@ -126,7 +126,7 @@ def launch_setup(context, *args, **kwargs):
         launch_utils.rviz(moveit_config, launch_rviz, sim)
     )
     nodes_to_start.append(
-        launch_utils.static_tf('base_link')
+        launch_utils.static_tf('base_link', sim)
     )
     nodes_to_start.append(
         launch_utils.robot_state_publisher(moveit_config.robot_description, sim)
