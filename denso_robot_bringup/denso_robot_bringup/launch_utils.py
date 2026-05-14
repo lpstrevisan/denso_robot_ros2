@@ -113,7 +113,7 @@ def static_tf(child_frame, use_sim_time):
         arguments=[
             '--frame-id', 'world',
             '--child-frame-id', child_frame
-        ]
+        ],
         parameters=[
             {'use_sim_time': use_sim_time}
         ]
