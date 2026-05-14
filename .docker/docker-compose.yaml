@@ -9,7 +9,7 @@ services:
     build: 
       context: ..
       dockerfile: .docker/Dockerfile
-    image: denso_ros:humble
+    image: denso_ros:jazzy
     privileged: true
     network_mode: host
     cap_add:
@@ -31,7 +31,7 @@ services:
     build: 
       context: ..
       dockerfile: .docker/Dockerfile
-    image: denso_ros:humble
+    image: denso_ros:jazzy
     privileged: true
     network_mode: host
     cap_add:
