@@ -40,9 +40,9 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(
             Path(get_package_share_directory('ros_gz_sim')) / 'launch' / 'gz_sim.launch.py'
         ),
-        launch_arguments={'gz_args': ['-r -v4 ', world]}.items()
+        launch_arguments={'gz_args': ['-r -v1 ', world]}.items()
         # '-r'   == run simulation on start (required for ros2_controllers to connect)
-        # '-v 4' == verbose level 4 (maximum console output)
+        # '-v1' == verbose level 1 (minimum console output)
     )
 
     spawn_entity = Node(
@@ -62,7 +62,7 @@ def launch_setup(context, *args, **kwargs):
         executable='parameter_bridge',
         arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
         parameters=[{
-         'qos_overrides./tf_static.publisher.durability': 'transient_local'
+            'qos_overrides./tf_static.publisher.durability': 'transient_local'
         }],
         output='screen'
     )
