@@ -40,7 +40,7 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(
             Path(get_package_share_directory('ros_gz_sim')) / 'launch' / 'gz_sim.launch.py'
         ),
-        launch_arguments={'gz_args': ['-r -v4 ', world]}.items()
+        launch_arguments={'gz_args': ['-r -v1 ', world]}.items()
         # '-r'   == run simulation on start (required for ros2_controllers to connect)
         # '-v 4' == verbose level 4 (maximum console output)
     )
@@ -57,6 +57,13 @@ def launch_setup(context, *args, **kwargs):
         output='screen'
     )
 
+    ros_gz_clock_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+        output='screen'
+    )
+
     # Bridge Gazebo camera topics to ROS only when a camera is requested
     ros_gz_image_bridge = Node(
         package='ros_gz_image',
@@ -67,7 +74,7 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(gz_cam)
     )
 
-    return [gazebo, spawn_entity, ros_gz_image_bridge]
+    return [gazebo, spawn_entity, ros_gz_clock_bridge, ros_gz_image_bridge]
 
 
 def generate_launch_description():
