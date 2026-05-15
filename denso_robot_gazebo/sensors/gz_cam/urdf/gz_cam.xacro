@@ -9,7 +9,7 @@
       <link name="${namespace}gz_cam_link" />
 
       <joint name="${namespace}gz_cam_joint" type="fixed">
-            <!-- here you define where your tool will connect. In this case, it's at joint 6. -->
+        <!-- You should always attach the flange -->
         <parent link="${namespace}flange"/> 
         <child link="${namespace}gz_cam_link"/>
         <origin rpy="0 ${radians(-90)} 0" xyz="0 0 0.01"/>
