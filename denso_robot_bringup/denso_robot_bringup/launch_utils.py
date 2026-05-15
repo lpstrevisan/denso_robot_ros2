@@ -46,7 +46,7 @@ def control_node(robot_controllers_path, bcap_slave_control_cycle_msec, sim):
 
     return control_node
 
-def controller_spawner(controller):
+def controller_spawner(controller, use_sim_time):
 
     controller_spawner = Node(
         package='controller_manager',
@@ -55,7 +55,8 @@ def controller_spawner(controller):
             controller,
             '-c',
             '/controller_manager'
-        ]
+        ],
+        parameters=[{'use_sim_time': use_sim_time}]
     )
 
     return controller_spawner
@@ -102,7 +103,7 @@ def rviz(moveit_config, launch_rviz, use_sim_time):
 
     return rviz
 
-def static_tf(child_frame):
+def static_tf(child_frame, use_sim_time):
 
     static_tf = Node(
         package='tf2_ros',
@@ -112,6 +113,9 @@ def static_tf(child_frame):
         arguments=[
             '--frame-id', 'world',
             '--child-frame-id', child_frame
+        ],
+        parameters=[
+            {'use_sim_time': use_sim_time}
         ]
     )
 
