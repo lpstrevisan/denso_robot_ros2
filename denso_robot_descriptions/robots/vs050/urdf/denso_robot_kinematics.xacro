@@ -204,16 +204,16 @@
 
 		<link name="${namespace}flange"/>
 		<joint name="${namespace}J6-flange" type="fixed">
-		<parent link="${namespace}J6"/>
-		<child link="${namespace}flange"/>
-		<origin rpy="0 0 0" xyz="0 0 0"/>
+			<parent link="${namespace}J6"/>
+			<child link="${namespace}flange"/>
+			<origin rpy="0 0 0" xyz="0 0 0"/>
 		</joint>
 
 		<link name="${namespace}tool0"/>
 		<joint name="${namespace}J6-tool0" type="fixed">
-		<parent link="${namespace}J6"/>
-		<child link="${namespace}tool0"/>
-		<origin rpy="${radians(pi)} ${radians(-pi/2)} 0" xyz="0 0 0"/>
+			<parent link="${namespace}J6"/>
+			<child link="${namespace}tool0"/>
+			<origin rpy="${pi} ${-pi/2} 0" xyz="0 0 0"/>
 		</joint>
 	</xacro:macro>
 </robot>
