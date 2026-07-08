@@ -22,9 +22,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="10.671" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="-0.03867582 -0.0001277 0.09016489" />
+				<inertia ixx="2.56206696e-05" ixy="0" ixz="0" iyy="4.04209402e-05" iyz="0" izz="3.52484166e-05" />
 			</inertial>
 		</link>
 
@@ -42,9 +42,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="4.955" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="0.0087579 -0.0012957 0.08320129" />
+				<inertia ixx="2.03430428e-05" ixy="0" ixz="0" iyy="1.43075081e-05" iyz="0" izz="1.33370577e-05" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_1" type="revolute">
@@ -52,8 +52,8 @@
 			<child link="${namespace}J1" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.181500" />
 			<axis xyz="-0.000000 -0.000000 1.000000" />
-      		<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-170)}" upper="${radians(170)}" velocity="${radians(425)}" />
+      		<!-- a negative effort value acts as a sentinel meaning "no limit" (treated as infinite) -->
+			<limit effort="-1" lower="${radians(-170)}" upper="${radians(170)}" velocity="${radians(425)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
@@ -71,9 +71,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="6.184" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="-0.01386069 -0.00042137 0.08832005" />
+				<inertia ixx="3.54063103e-05" ixy="0" ixz="0" iyy="3.25785729e-05" iyz="0" izz="9.77018345e-06" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_2" type="revolute">
@@ -81,8 +81,8 @@
 			<child link="${namespace}J2" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.163500" />
 			<axis xyz="-0.000000 1.000000 -0.000000" />
-      		<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-120)}" upper="${radians(120)}" velocity="${radians(340)}" />
+      		<!-- a negative effort value acts as a sentinel meaning "no limit" (treated as infinite) -->
+			<limit effort="-1" lower="${radians(-120)}" upper="${radians(120)}" velocity="${radians(340)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
@@ -100,9 +100,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="2.645" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="-0.00406821 0.0016604 0.03603942" />
+				<inertia ixx="4.41330319e-06" ixy="0" ixz="0" iyy="4.45791777e-06" iyz="0" izz="2.03895005e-06" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_3" type="revolute">
@@ -110,8 +110,8 @@
 			<child link="${namespace}J3" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.250000" />
 			<axis xyz="-0.000000 1.000000 -0.000000" />
-      		<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-120)}" upper="${radians(151)}" velocity="${radians(385.72)}" />
+      		<!-- a negative effort value acts as a sentinel meaning "no limit" (treated as infinite) -->
+			<limit effort="-1" lower="${radians(-120)}" upper="${radians(151)}" velocity="${radians(385.72)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
@@ -129,9 +129,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="1.770" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="-0.00090245 0.00241103 0.0619847" />
+				<inertia ixx="2.99417953e-06" ixy="0" ixz="0" iyy="2.61053927e-06" iyz="0" izz="1.50605741e-06" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_4" type="revolute">
@@ -139,8 +139,7 @@
 			<child link="${namespace}J4" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="-0.010000 0.000000 0.119500" />
 			<axis xyz="-0.000000 -0.000000 1.000000" />
-			<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-270)}" upper="${radians(270)}" velocity="${radians(425)}" />
+			<limit effort="6.66" lower="${radians(-270)}" upper="${radians(270)}" velocity="${radians(425)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
@@ -158,9 +157,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="0.735" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="0.00125985 -0.00178539 0.00593704" />
+				<inertia ixx="4.39629328e-07" ixy="0" ixz="0" iyy="5.25922017e-07" iyz="0" izz="2.67062349e-07" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_5" type="revolute">
@@ -168,8 +167,7 @@
 			<child link="${namespace}J5" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.135500" />
 			<axis xyz="-0.000000 1.000000 -0.000000" />
-			<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-120)}" upper="${radians(120)}" velocity="${radians(327.01)}" />
+			<limit effort="6.66" lower="${radians(-120)}" upper="${radians(120)}" velocity="${radians(327.01)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
@@ -187,9 +185,9 @@
 				</geometry>
 			</collision>
 			<inertial>
-				<mass value="1" />
-				<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.000000" />
-				<inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1" />
+				<mass value="0.041" />
+				<origin rpy="0.000000 0.000000 0.000000" xyz="-4.13833459e-07 -7.00967243e-05 -1.06200824e-02" />
+				<inertia ixx="2.96285977e-09" ixy="0" ixz="0" iyy="2.98822098e-09" iyz="0" izz="4.55917832e-09" />
 			</inertial>
 		</link>
 		<joint name="${namespace}joint_6" type="revolute">
@@ -197,8 +195,7 @@
 			<child link="${namespace}J6" />
 			<origin rpy="0.000000 0.000000 0.000000" xyz="0.000000 0.000000 0.070000" />
 			<axis xyz="-0.000000 -0.000000 1.000000" />
-			<!-- effort value is arbitary for make gazebo simulation runs without problems -->
-			<limit effort="175" lower="${radians(-360)}" upper="${radians(360)}" velocity="${radians(680)}" />
+			<limit effort="3.13" lower="${radians(-360)}" upper="${radians(360)}" velocity="${radians(680)}" />
 			<dynamics damping="0" friction="0" />
 		</joint>
 
