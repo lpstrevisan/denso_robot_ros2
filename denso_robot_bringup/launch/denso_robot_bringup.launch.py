@@ -79,11 +79,9 @@ def launch_setup(context, *args, **kwargs):
         .joint_limits(
             file_path=f'robots/{model.perform(context)}/config/joint_limits.yaml'
         )
-        .moveit_cpp(file_path='config/moveit_cpp.yaml')
         .trajectory_execution(
             file_path=f'robots/{model.perform(context)}/config/moveit_controllers.yaml'
         )
-        #.planning_scene_monitor()
         .planning_pipelines(pipelines=['ompl'])
         .pilz_cartesian_limits(file_path='config/pilz_cartesian_limits.yaml')
         .to_moveit_configs()
