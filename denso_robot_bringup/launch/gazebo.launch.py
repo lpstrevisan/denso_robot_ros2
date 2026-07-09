@@ -42,7 +42,7 @@ def launch_setup(context, *args, **kwargs):
         ),
         launch_arguments={'gz_args': ['-r -v1 ', world]}.items()
         # '-r'   == run simulation on start (required for ros2_controllers to connect)
-        # '-v 4' == verbose level 4 (maximum console output)
+        # '-v1' == verbose level 1 (minimum console output)
     )
 
     spawn_entity = Node(
