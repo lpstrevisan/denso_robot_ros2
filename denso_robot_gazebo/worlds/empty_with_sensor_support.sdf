@@ -66,5 +66,12 @@
         </visual>
       </link>
     </model>
+    
+    <include>
+      <uri>
+        model://bicycle
+      </uri>
+      <pose>0.6 0 0 0 0 0</pose>
+    </include>
   </world>
 </sdf>
