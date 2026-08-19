@@ -858,6 +858,21 @@ VariantChangeType(VARIANT *pvargDest, VARIANT *pvarSrc, uint16_t wFlags,
       return DISP_E_BADVARTYPE; \
   }
 
+  /**
+   * NOTE: -Wtype-limits is suppressed here because of the SubChangeType
+   * macro. It is reused for both signed types (int32_t, int64_t, ...)
+   * and unsigned types (uint32_t, uint64_t, used below in the
+   * SubChangeType(uint32_t, ...) and SubChangeType(uint64_t, ...) calls).
+   *
+   * When `type` is unsigned, comparisons such as `val < (type)LONG_MIN`
+   * or `val < (type)0` are statically always false (an unsigned value
+   * can never be < 0). GCC flags this even though the `IsUnsigned` guard
+   * is only resolved at runtime (via pvarSrc->vt). This is not a bug:
+   * overflow behavior remains correct — it's a structural false positive
+   * from reusing a generic macro in C (no templates / if-constexpr).
+   *
+   * See: https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wtype-limits
+   */
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wtype-limits"
   switch (pvarSrc->vt) {
