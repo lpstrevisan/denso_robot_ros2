@@ -303,8 +303,6 @@ typedef struct SAFEARRAY
  * @struct VARIANT
  * @brief  A type definition for the multi type variable.
  */
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
 typedef struct VARIANT
 {
   uint16_t vt; /**< Variant type */
@@ -327,7 +325,6 @@ typedef struct VARIANT
     SAFEARRAY* parray;    /**< VT_ARRAY */
   };
 } VARIANT;
-#pragma GCC diagnostic pop
 
 #endif /* __oaidl_h__ */
 
