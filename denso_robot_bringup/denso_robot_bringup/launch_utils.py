@@ -62,12 +62,6 @@ def controller_spawner(controller, use_sim_time):
     return controller_spawner
 
 def move_group(move_config, use_sim_time):
-    occupancy_map_monitor_parameters = {
-        'sensors': ['3D_sensor'],
-        '3D_sensor': {
-            'sensor_plugin': '', #'~'
-        },
-    }
 
     move_group = Node(
         package='moveit_ros_move_group',
@@ -75,7 +69,6 @@ def move_group(move_config, use_sim_time):
         output='screen',
         parameters=[
             move_config.to_dict(),
-            occupancy_map_monitor_parameters,
             {'use_sim_time': use_sim_time}
         ]
     )
