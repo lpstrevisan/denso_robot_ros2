@@ -8,7 +8,7 @@ Some useful links:
 
 [MoveIt Servo Docs](https://moveit.picknik.ai/main/doc/examples/realtime_servo/realtime_servo_tutorial.html)
 
-[MoveIt Servo Humble GitHub](https://github.com/moveit/moveit2/tree/humble/moveit_ros/moveit_servo)
+[MoveIt Servo Jazzy GitHub](https://github.com/moveit/moveit2/tree/jazzy/moveit_ros/moveit_servo)
 
 ## ⚠️ Safety Warning: Collision Thresholds
 

@@ -84,7 +84,7 @@ This file defines your tool's links, joints, and (if necessary) Gazebo sensors
     <!--  the block below is only necessary if your tool needs to implement a sensor to be used in the Gazebo. -->
     <gazebo reference="${namespace}your_tool_link">
       <sensor name="your_tool" type="type_of_sensor">
-        <!-- At https://gazebosim.org/docs/fortress/sensors/, you can find examples of some sensors. -->    
+        <!-- At https://gazebosim.org/docs/harmonic/sensors/, you can find examples of some sensors. -->    
       </sensor>
     </gazebo>
     </xacro:macro>
