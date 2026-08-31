@@ -145,9 +145,6 @@ def moveit_servo(moveit_config, sim, arm=None):
         )
     )
 
-    acceleration_filter_update_period = {'update_period': 0.01}
-    planning_group_name = {'planning_group_name': 'arm'}
-
     if arm == 'left':
         servo_params = (
             servo_params
@@ -155,15 +152,12 @@ def moveit_servo(moveit_config, sim, arm=None):
             .parameter('moveit_servo.command_out_topic', '/left_denso_joint_trajectory_controller/joint_trajectory')
         )
 
-        planning_group_name = {'planning_group_name': 'left_arm'}
     elif arm == 'right':
         servo_params = (
             servo_params
             .parameter('moveit_servo.move_group_name', 'right_arm')
             .parameter('moveit_servo.command_out_topic', '/right_denso_joint_trajectory_controller/joint_trajectory')
         )
-
-        planning_group_name = {'planning_group_name': 'right_arm'}
 
     servo_node = Node(
         package='moveit_servo',
@@ -175,8 +169,6 @@ def moveit_servo(moveit_config, sim, arm=None):
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits,
-            acceleration_filter_update_period,
-            planning_group_name,
             {'use_sim_time': sim}
         ],
         output='screen',
