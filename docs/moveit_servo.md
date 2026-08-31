@@ -7,20 +7,51 @@ Commands can be sent in Joint Space or Cartesian Space (Twist and Pose).
 Useful references:
 
 - [MoveIt Servo Jazzy Docs](https://moveit.picknik.ai/main/doc/examples/realtime_servo/realtime_servo_tutorial.html)
-- [MoveIt Servo Jazzy GitHub](https://github.com/moveit/moveit2/tree/jazzy/moveit_ros/moveit_servo)
+- [All parameters of MoveIt Servo Jazzy](https://github.com/moveit/moveit2/blob/jazzy/moveit_ros/moveit_servo/config/servo_parameters.yaml)
+
+
+> **NOTE**: Some applications need lower jitter. For this, you will need a real-time system. For a complete guide on setting up real-time Linux with NVIDIA drivers and Docker containers, see: [Linux Real-Time Guide by Tobit Flatscher](https://github.com/2b-t/linux-realtime#linux-and-docker-real-time-guide-for-ubuntu-realtime-kernel-and-preempt_rt)
 
 ## Safety Warning: Collision Thresholds
 
 > **NOTE**: **High Speed Risk** — moving at high velocities may increase the risk of collisions due to latency or stopping distances. **Before using MoveIt Servo**, you must evaluate and tune the collision proximity thresholds to ensure safety.
 
-To modify these values, edit the following file: `denso_robot_moveit_config/config/moveit_servo.yaml` r by using the `ros2 param` command
+To modify these values, edit the following file: [`denso_robot_moveit_config/config/moveit_servo.yaml`](../denso_robot_moveit_config/config/moveit_servo.yaml) or by using the `ros2 param` command
 
 Adjust the following parameters:
 
 * `self_collision_proximity_threshold`: distance to trigger a stop when near self-collision.
 * `scene_collision_proximity_threshold`: distance to trigger a stop when near environment objects.
 
----
+## Signal Smoothing
+
+MoveIt Servo supports command smoothing via `smoothing_filter_plugin_name` in [`denso_robot_moveit_config/config/moveit_servo.yaml`](../denso_robot_moveit_config/config/moveit_servo.yaml)
+ 
+[Signal Smoothing](https://moveit.picknik.ai/main/doc/examples/realtime_servo/realtime_servo_tutorial.html#signal-smoothing) status:
+
+* **Butterworth Filter:** Supported.
+* **Ruckig Filter:** Not supported yet.
+* **Acceleration Limited:** Supported, but **requires** passing `update_period` and `planning_group_name` parameters in your launch file:
+
+```python
+# Example launch configuration snippet
+acceleration_filter_update_period = {'update_period': 0.01}
+planning_group_name = {'planning_group_name': 'arm'}
+
+...
+
+servo_node = Node(
+    package='moveit_servo',
+    executable='servo_node_main',
+    ...
+    parameters=[
+        ...
+        acceleration_filter_update_period,
+        planning_group_name,
+    ],
+    ...
+)
+```
 
 ## Usage
 
@@ -42,12 +73,12 @@ where `<value>` corresponds to:
 
 * **Pause Servo:** pauses motion while keeping the servo active.
 ```bash
-ros2 service call /servo_node/pause_servo std_srvs/srv/SetBool data:\ true\
+ros2 service call /servo_node/pause_servo std_srvs/srv/SetBool "{data: true}"
 ```
 
 * **Unpause Servo:** resumes motion after a pause.
 ```bash
-ros2 service call /servo_node/pause_servo std_srvs/srv/SetBool data:\ false\
+ros2 service call /servo_node/pause_servo std_srvs/srv/SetBool "{data: false}"
 ```
 
 ### 2. Motion Commands
@@ -66,8 +97,8 @@ Sends angular velocities to specific joints.
 
 * **Unit**: radians per second (rad/s)
 ```bash
-ros2 topic pub /servo_node/delta_joint_cmds control_msgs/msg/JointJog "{
-  header: {frame_id: 'base_link', stamp: 'now'},
+ros2 topic pub -r <rate in Hz> /servo_node/delta_joint_cmds control_msgs/msg/JointJog "{
+  header: {frame_id: '<frame_id>', stamp: 'now'},
   joint_names: ['joint_1', 'joint_2', ...],
   velocities: [<velocity_joint_1>, <velocity_joint_2>, ...]
 }"
@@ -86,8 +117,8 @@ The `frame_id` defines the reference frame the velocity is expressed in:
 * `tool0` — motion is expressed relative to the end-effector frame (see [Frame Conventions](frame_conventions.md)). Useful for motions relative to the tool's own orientation, e.g. moving "forward" from the tool's point of view.
 
 ```bash
-ros2 topic pub /servo_node/delta_twist_cmds geometry_msgs/msg/TwistStamped "{
-  header: {frame_id: 'base_link', stamp: 'now'},
+ros2 topic pub -r <rate in Hz> /servo_node/delta_twist_cmds geometry_msgs/msg/TwistStamped "{
+  header: {frame_id: '<frame_id>', stamp: 'now'},
   twist: {
     linear: {x: <velocity_x>, y: <velocity_y>, z: <velocity_z>},
     angular: {x: <velocity_roll>, y: <velocity_pitch>, z: <velocity_yaw>}
@@ -108,8 +139,8 @@ The `frame_id` defines the reference frame the target pose is expressed in:
 * `tool0` — the target pose is relative to the current end-effector frame (see Frame Conventions). Useful for incremental motions relative to the tool's own position and orientation.
 
 ```bash
-ros2 topic pub /servo_node/pose_target_cmds geometry_msgs/msg/PoseStamped "{
-  header: {frame_id: 'base_link', stamp: 'now'},
+ros2 topic pub -r <rate in Hz> /servo_node/pose_target_cmds geometry_msgs/msg/PoseStamped "{
+  header: {frame_id: '<frame_id>', stamp: 'now'},
   pose: {
     position: {x: <x>, y: <y>, z: <z>},
     orientation: {x: <qx>, y: <qy>, z: <qz>, w: <qw>}
