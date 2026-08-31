@@ -858,6 +858,13 @@ VariantChangeType(VARIANT *pvargDest, VARIANT *pvarSrc, uint16_t wFlags,
       return DISP_E_BADVARTYPE; \
   }
 
+  /**
+  * NOTE: -Wtype-limits suppressed here because SubChangeType is a generic
+  * macro reused for signed and unsigned types. GCC statically flags
+  * comparisons like `val < (type)0` as always-false when `type` is
+  * unsigned, but the branch is only taken based on IsUnsigned (resolved
+  * at runtime via pvarSrc->vt). False positive, not a bug.
+  */
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wtype-limits"
   switch (pvarSrc->vt) {
