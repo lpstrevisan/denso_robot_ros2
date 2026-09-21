@@ -71,7 +71,7 @@ To control other robot types, see the _ROS2Converter_ page (**under construction
 
    ```bash
    cd $COLCON_WS
-   git clone -b humble https://github.com/Curso-de-Robotica-e-IA/denso_robot_ros2.git src
+   git clone -b humble https://github.com/lpstrevisan/denso_robot_ros2.git src
    ```
 
 4. To use [MoveIt2](https://moveit.picknik.ai/humble/index.html), install the [required packages (binary installation, Humble version)](https://moveit.ai/install-moveit2/binary/).
