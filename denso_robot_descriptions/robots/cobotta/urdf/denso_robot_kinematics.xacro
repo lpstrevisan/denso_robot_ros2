@@ -65,7 +65,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(-150)}" upper="${radians(150)}"
         velocity="${radians(23.1)}" />
       <dynamics damping="0" friction="0" />
@@ -103,7 +103,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(-60)}" upper="${radians(100)}"
         velocity="${radians(22.47)}" />
       <dynamics damping="0" friction="0" />
@@ -141,7 +141,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(18)}" upper="${radians(140)}"
         velocity="${radians(41.58)}" />
       <dynamics damping="0" friction="0" />
@@ -179,7 +179,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(-170)}" upper="${radians(170)}"
         velocity="${radians(42.35)}" />
       <dynamics damping="0" friction="0" />
@@ -217,7 +217,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(-95)}" upper="${radians(135)}"
         velocity="${radians(42.35)}" />
       <dynamics damping="0" friction="0" />
@@ -256,7 +256,7 @@
       <!-- Initially, a negative effort value acting as a sentinel indicating "no limit" (treated as
       infinity) was used,
 			but this was changed following the error on line 175 of 
-			https://github.com/gazebosim/gz-physics/blob/ign-physics5/dartsim/src/JointFeatures.cc -->
+			https://github.com/gazebosim/gz-physics/blob/ign-physics7/dartsim/src/JointFeatures.cc -->
       <limit effort="1e6" lower="${radians(-170)}" upper="${radians(170)}"
         velocity="${radians(63.56)}" />
       <dynamics damping="0" friction="0" />
